@@ -13,7 +13,7 @@
     :root {
       --gold:    #FFD700;
       --gold2:   #F5A623;
-      --bg:      #FFFDF0;
+      --bg:      #ffffff;
       --card:    #ffffff;
       --text:    #1A1A2E;
       --muted:   #666666;
@@ -735,7 +735,7 @@ function renderCard(m, isNext) {
         <div class="score-sep">–</div>
         <div class="score-num">${res.as}</div>
       </div>
-      <div style="font-size:0.6rem;color:var(--muted);margin-top:3px">FULL TIME</div>`;
+      <div style="font-size:0.6rem;color:var(--muted);margin-top:3px">FT · ${fmt12(m.time)}</div>`;
   } else if (st === 'live') {
     midHtml = `<div class="match-time-display live">● LIVE</div><div class="kick-off-lbl" style="color:var(--red)">In Progress</div>`;
   } else {
