@@ -5,29 +5,26 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>FIFA World Cup 2026 ⚽</title>
   <style>
+    @import url('https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@700;800;900&display=swap');
+
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-    /* ── KID-FRIENDLY PALETTE ── */
+    /* ── PALETTE ── */
     :root {
-      --gold:   #ffe234;
-      --gold2:  #fff176;
-      --bg:     #1a0a4a;        /* deep royal purple */
-      --card:   #251560;        /* rich indigo card */
-      --card2:  #2e1a70;
-      --border: rgba(255,255,255,0.13);
-      --text:   #f0eeff;
-      --muted:  #b0a8d8;
-      --green:  #00e87a;        /* electric green */
-      --red:    #ff3d6b;        /* hot pink-red */
-      --blue:   #38bfff;        /* sky blue */
-      --purple: #d47dff;        /* bright purple */
-      --orange: #ff8c00;        /* vivid orange */
-      --pink:   #ff6ef7;        /* hot pink */
-      --cyan:   #00f0e0;        /* neon cyan */
+      --gold:    #FFD700;
+      --gold2:   #F5A623;
+      --bg:      #ffffff;
+      --card:    #ffffff;
+      --text:    #1A1A2E;
+      --muted:   #666666;
+      --green:   #4CAF50;
+      --green2:  #2e7d32;
+      --red:     #F44336;
+      --blue:    #1565C0;
+      --purple:  #7B1FA2;
     }
 
     /* ── GLOBAL ── */
-    @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@700;800;900&display=swap');
     body {
       font-family: 'Nunito', 'Segoe UI', system-ui, sans-serif;
       background: var(--bg);
@@ -35,6 +32,21 @@
       min-height: 100vh;
       overflow-x: hidden;
     }
+
+    /* subtle football field stripes */
+    body::before {
+      content: '';
+      position: fixed; inset: 0; z-index: -1;
+      background: repeating-linear-gradient(
+        180deg,
+        transparent 0px,
+        transparent 60px,
+        rgba(0,150,0,0.03) 60px,
+        rgba(0,150,0,0.03) 120px
+      );
+      pointer-events: none;
+    }
+    body::after { content: none; }
 
     /* ── CONFETTI BURST ── */
     @keyframes confettiFall {
@@ -47,33 +59,13 @@
       animation: confettiFall 1.3s ease-in forwards;
     }
 
-    /* ── ANIMATED BACKGROUND ── */
-    body::before {
-      content: '';
-      position: fixed; inset: 0; z-index: -1;
-      background:
-        radial-gradient(ellipse 70% 55% at 15% 10%,  rgba(100,60,255,0.35) 0%, transparent 60%),
-        radial-gradient(ellipse 60% 45% at 85% 80%,  rgba(255,60,200,0.2)  0%, transparent 55%),
-        radial-gradient(ellipse 50% 40% at 50% 50%,  rgba(0,100,255,0.12)  0%, transparent 60%),
-        var(--bg);
-    }
-    /* floating soccer balls */
-    body::after {
-      content: '⚽ ⚽ ⚽ ⚽ ⚽ ⚽';
-      position: fixed; inset: 0; z-index: -1;
-      font-size: 28px; letter-spacing: 120px;
-      color: transparent; text-shadow: 0 0 0 rgba(255,255,255,0.03);
-      display: flex; align-items: center; justify-content: center;
-      opacity: 0.04; pointer-events: none;
-    }
-
     /* ── HEADER ── */
     .header {
-      background: linear-gradient(135deg, #12006e 0%, #2a0090 40%, #4a00c0 70%, #2a0090 100%);
+      background: #f0fdf4;
       border-bottom: 4px solid var(--gold);
       padding: 16px 20px 12px;
       position: sticky; top: 0; z-index: 100;
-      box-shadow: 0 6px 28px rgba(0,0,0,0.6), 0 0 60px rgba(120,0,255,0.3);
+      box-shadow: 0 4px 16px rgba(0,0,0,0.08);
     }
     .header-inner { max-width: 920px; margin: 0 auto; }
 
@@ -84,7 +76,7 @@
     .trophy-wrap {
       font-size: 42px;
       animation: trophyBob 2.2s ease-in-out infinite;
-      filter: drop-shadow(0 0 14px rgba(255,226,52,0.9));
+      filter: drop-shadow(0 3px 6px rgba(245,166,35,0.4));
     }
     @keyframes trophyBob {
       0%,100% { transform: translateY(0) rotate(-5deg) scale(1); }
@@ -92,28 +84,26 @@
     }
 
     .header-titles h1 {
-      font-size: 1.5rem; font-weight: 900; line-height: 1.1;
-      background: linear-gradient(90deg, var(--gold), var(--pink), var(--cyan), var(--gold));
-      background-size: 300% 100%;
-      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-      background-clip: text;
-      animation: titleShine 4s linear infinite;
+      font-family: 'Fredoka One', cursive;
+      font-size: 2rem; font-weight: 400; line-height: 1.1;
+      color: var(--text);
+      text-shadow: 3px 3px 0 var(--gold);
     }
-    @keyframes titleShine { 0%{background-position:0% 50%} 100%{background-position:300% 50%} }
-    .header-titles p { font-size: 0.74rem; color: #c8b8ff; margin-top: 2px; }
+    .header-titles p { font-size: 0.74rem; color: #555; margin-top: 2px; font-family: 'Nunito', sans-serif; font-weight: 700; }
 
     .live-pill {
       margin-left: auto;
-      background: linear-gradient(135deg, #ff0050, #ff3d6b);
+      background: var(--red);
       color: #fff;
       font-size: 0.68rem; font-weight: 900; letter-spacing: 0.1em;
       padding: 6px 14px; border-radius: 50px;
       display: none; align-items: center; gap: 5px;
-      box-shadow: 0 0 16px rgba(255,0,80,0.7);
+      box-shadow: 0 0 16px rgba(244,67,54,0.5);
       animation: livePulse 1.2s infinite;
+      font-family: 'Nunito', sans-serif;
     }
     .live-pill.show { display: flex; }
-    @keyframes livePulse { 0%,100%{box-shadow:0 0 16px rgba(255,0,80,0.7);} 50%{box-shadow:0 0 28px rgba(255,0,80,1);} }
+    @keyframes livePulse { 0%,100%{box-shadow:0 0 16px rgba(244,67,54,0.5);} 50%{box-shadow:0 0 28px rgba(244,67,54,0.85);} }
     .live-dot { width:8px;height:8px;background:#fff;border-radius:50%;animation:dotPulse 1s infinite; }
     @keyframes dotPulse { 0%,100%{opacity:1;transform:scale(1);} 50%{opacity:0.4;transform:scale(0.7);} }
 
@@ -121,93 +111,96 @@
     .date-nav {
       display: flex; gap: 6px;
       overflow-x: auto; padding-bottom: 4px;
-      scrollbar-width: thin; scrollbar-color: rgba(255,255,255,0.2) transparent;
+      scrollbar-width: thin; scrollbar-color: rgba(0,0,0,0.15) transparent;
     }
     .date-nav::-webkit-scrollbar { height: 3px; }
-    .date-nav::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 2px; }
+    .date-nav::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.15); border-radius: 2px; }
 
     .date-btn {
-      flex-shrink: 0; padding: 7px 14px; border-radius: 12px;
-      border: 2px solid rgba(255,255,255,0.15);
-      background: rgba(255,255,255,0.07);
-      color: #c0b0f0; font-size: 0.74rem; font-weight: 800;
+      flex-shrink: 0; padding: 7px 16px; border-radius: 50px;
+      border: 2.5px solid #e0e0e0;
+      background: #ffffff;
+      color: var(--text); font-size: 0.74rem; font-weight: 700;
       cursor: pointer; transition: all 0.18s; white-space: nowrap;
-      font-family: inherit;
+      font-family: 'Nunito', sans-serif;
     }
-    .date-btn:hover { background: rgba(255,255,255,0.14); color: #fff; border-color: rgba(255,255,255,0.3); transform: translateY(-1px); }
+    .date-btn:hover { background: #f9f9f9; border-color: #bbb; transform: translateY(-1px); box-shadow: 0 3px 8px rgba(0,0,0,0.1); }
     .date-btn.is-today { border-color: var(--green); color: var(--green); }
-    .date-btn.active   { background: linear-gradient(135deg,#ffe234,#ffb300); color: #1a0a4a; border-color: var(--gold); font-weight: 900; box-shadow: 0 0 14px rgba(255,226,52,0.5); }
-    .date-btn.is-today.active { background: linear-gradient(135deg,#00e87a,#00c060); border-color: var(--green); color: #fff; box-shadow: 0 0 14px rgba(0,232,122,0.5); }
+    .date-btn.active   { background: var(--gold); color: var(--text); border-color: var(--gold); font-weight: 900; box-shadow: 0 4px 0 #F5A623; }
+    .date-btn.is-today.active { background: var(--gold); border-color: var(--gold); color: var(--text); box-shadow: 0 4px 0 #F5A623; }
 
     /* ── MAIN ── */
     .main { max-width: 920px; margin: 0 auto; padding: 22px 14px 70px; }
 
     /* ── TODAY HERO ── */
     .today-hero {
-      border-radius: 22px; padding: 20px 22px; margin-bottom: 26px;
-      background: linear-gradient(135deg, #1a005a 0%, #3d00a0 50%, #1a005a 100%);
-      border: 2px solid rgba(0,232,122,0.5);
-      box-shadow: 0 0 40px rgba(0,232,122,0.15), inset 0 0 60px rgba(100,0,255,0.1);
+      border-radius: 20px; padding: 20px 22px; margin-bottom: 26px;
+      background: #f0fdf4;
+      border: 3px solid var(--green);
+      box-shadow: 0 8px 32px rgba(0,0,0,0.08);
     }
     .hero-top {
       display: flex; align-items: flex-start; justify-content: space-between;
       margin-bottom: 16px;
     }
-    .hero-label { font-size: 0.72rem; font-weight: 900; text-transform: uppercase; letter-spacing: 0.12em; color: var(--green); margin-bottom: 4px; }
-    .hero-date  { font-size: 1.15rem; font-weight: 900; color: #fff; }
-    .hero-stats { text-align: right; font-size: 0.75rem; color: #c0b0f0; line-height: 1.7; }
+    .hero-label { font-size: 0.72rem; font-weight: 900; text-transform: uppercase; letter-spacing: 0.12em; color: var(--green2); margin-bottom: 4px; }
+    .hero-date  { font-size: 1.15rem; font-weight: 900; color: var(--text); }
+    .hero-stats { text-align: right; font-size: 0.75rem; color: #555; line-height: 1.7; }
 
     .next-card {
-      background: rgba(255,255,255,0.09); border-radius: 16px; padding: 14px 18px;
+      background: #ffffff; border-radius: 16px; padding: 14px 18px;
       display: flex; align-items: center; gap: 14px;
-      border: 1px solid rgba(255,255,255,0.12);
+      border: 2px solid #e8f5e9;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.06);
     }
-    .next-info .next-lbl { font-size: 0.63rem; font-weight: 900; text-transform: uppercase; letter-spacing: 0.1em; color: var(--gold); margin-bottom: 5px; }
-    .next-info .next-teams { font-size: 1.05rem; font-weight: 900; color: #fff; }
-    .next-info .next-meta  { font-size: 0.75rem; color: #c0b0f0; margin-top: 3px; }
+    .next-info .next-lbl { font-size: 0.63rem; font-weight: 900; text-transform: uppercase; letter-spacing: 0.1em; color: var(--gold2); margin-bottom: 5px; }
+    .next-info .next-teams { font-size: 1.05rem; font-weight: 900; color: var(--text); }
+    .next-info .next-meta  { font-size: 0.75rem; color: var(--muted); margin-top: 3px; }
 
     .countdown-box { margin-left: auto; text-align: center; min-width: 90px; }
-    .cd-num  { font-size: 1.6rem; font-weight: 900; color: var(--gold); line-height: 1; text-shadow: 0 0 12px rgba(255,226,52,0.6); }
-    .cd-lbl  { font-size: 0.6rem; color: #c0b0f0; text-transform: uppercase; letter-spacing: 0.07em; margin-top: 2px; }
+    .cd-num  { font-family: 'Fredoka One', cursive; font-size: 1.6rem; font-weight: 400; color: var(--gold2); line-height: 1; }
+    .cd-lbl  { font-size: 0.6rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.07em; margin-top: 2px; }
 
     /* ── SECTION LABEL ── */
     .section-label {
       font-size: 0.72rem; font-weight: 900; text-transform: uppercase; letter-spacing: 0.1em;
-      color: #c0b0f0; margin: 22px 0 10px;
+      color: var(--muted); margin: 22px 0 10px;
       display: flex; align-items: center; gap: 8px;
     }
-    .section-label::after { content:''; flex:1; height:1px; background: rgba(255,255,255,0.12); }
+    .section-label::after { content:''; flex:1; height:1px; background: #e0e0e0; }
 
     /* ── ROUND BANNER ── */
     .round-banner {
       display: flex; align-items: center; gap: 10px; margin: 26px 0 12px;
     }
     .round-pill {
-      padding: 7px 20px; border-radius: 50px;
-      font-size: 0.74rem; font-weight: 900; text-transform: uppercase; letter-spacing: 0.08em;
-      color: #fff; box-shadow: 0 4px 14px rgba(0,0,0,0.3);
+      font-family: 'Fredoka One', cursive;
+      padding: 8px 22px; border-radius: 50px;
+      font-size: 0.84rem; font-weight: 400; text-transform: uppercase; letter-spacing: 0.06em;
+      color: #fff;
     }
-    .pill-blue   { background: linear-gradient(90deg,#0060ff,#38bfff); box-shadow: 0 0 16px rgba(56,191,255,0.4); }
-    .pill-red    { background: linear-gradient(90deg,#cc0040,#ff3d6b); box-shadow: 0 0 16px rgba(255,61,107,0.4); }
-    .pill-gold   { background: linear-gradient(90deg,#ff8c00,#ffe234); color:#1a0a4a; box-shadow: 0 0 16px rgba(255,226,52,0.4); }
-    .pill-purple { background: linear-gradient(90deg,#7000cc,#d47dff); box-shadow: 0 0 16px rgba(212,125,255,0.4); }
+    .pill-blue   { background: #1565C0; box-shadow: 0 4px 0 #0d47a1; }
+    .pill-red    { background: #D32F2F; box-shadow: 0 4px 0 #b71c1c; }
+    .pill-gold   { background: var(--gold); color: var(--text); box-shadow: 0 4px 0 #e5ac00; }
+    .pill-purple { background: var(--purple); box-shadow: 0 4px 0 #4a148c; }
 
     /* ── MATCH CARD ── */
     .matches-list { display: flex; flex-direction: column; gap: 10px; }
 
     .match-card {
-      background: var(--card);
-      border: 2px solid rgba(255,255,255,0.1);
-      border-radius: 18px;
+      background: #ffffff;
+      border: 2px solid #f0f0f0;
+      border-radius: 20px;
       padding: 16px 18px 14px;
-      transition: transform 0.15s, border-color 0.2s, box-shadow 0.2s;
+      transition: transform 0.15s, box-shadow 0.2s;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.08);
     }
-    .match-card:hover { transform: translateY(-3px); border-color: rgba(255,255,255,0.25); box-shadow: 0 8px 28px rgba(0,0,0,0.4); }
+    .match-card:hover { transform: translateY(-3px); box-shadow: 0 12px 36px rgba(0,0,0,0.14); }
 
     /* status variants */
-    .match-card.is-next { border-color: rgba(255,226,52,0.6); background: linear-gradient(135deg,#1e1400,#2e1e00); box-shadow: 0 0 22px rgba(255,226,52,0.15); }
-    .match-card.is-live { border-color: rgba(255,61,107,0.65); background: linear-gradient(135deg,#1e0018,#2a0028); box-shadow: 0 0 22px rgba(255,61,107,0.2); }
-    .match-card.is-done { opacity: 0.9; }
+    .match-card.is-next { border: 3px solid var(--gold); background: #fffbea; box-shadow: 0 8px 32px rgba(255,215,0,0.18); }
+    .match-card.is-live { border: 3px solid var(--red); background: #fff5f5; box-shadow: 0 8px 32px rgba(244,67,54,0.15); }
+    .match-card.is-done { background: #f0fdf4; border: 2px solid var(--green); }
 
     /* card top row */
     .card-top {
@@ -219,54 +212,55 @@
     .team.home { align-items: flex-start; }
     .team.away { align-items: flex-end; }
 
-    .team-flag  { font-size: 2.1rem; line-height: 1; }
-    .team-name  { font-size: 0.92rem; font-weight: 900; color: #e8ddff; }
-    .team-name.winner { color: var(--gold); text-shadow: 0 0 8px rgba(255,226,52,0.5); }
+    .team-flag  { font-size: 2.2rem; line-height: 1; }
+    .team-name  { font-size: 0.92rem; font-weight: 800; color: var(--text); }
+    .team-name.winner { color: var(--green2); text-shadow: none; }
 
     /* middle score / time column */
     .match-mid { text-align: center; }
     .score-block { display: flex; align-items: center; gap: 8px; justify-content: center; }
-    .score-num   { font-size: 2.1rem; font-weight: 900; color: var(--gold); line-height: 1; text-shadow: 0 0 10px rgba(255,226,52,0.5); }
-    .score-sep   { font-size: 1rem; color: #8070b0; font-weight: 700; }
-    .match-time-display { font-size: 1rem; font-weight: 900; color: #fff; }
-    .match-time-display.live { color: var(--red); text-shadow: 0 0 8px rgba(255,61,107,0.6); }
-    .kick-off-lbl { font-size: 0.6rem; color: #a090d0; text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 3px; }
+    .score-num   { font-family: 'Fredoka One', cursive; font-size: 2.2rem; font-weight: 400; color: var(--gold2); line-height: 1; }
+    .score-sep   { font-size: 1rem; color: #aaa; font-weight: 700; }
+    .match-time-display { font-size: 1rem; font-weight: 900; color: var(--text); }
+    .match-time-display.live { color: var(--red); text-shadow: none; }
+    .kick-off-lbl { font-size: 0.6rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 3px; }
 
     /* meta row */
     .card-meta {
       display: flex; align-items: center; justify-content: center; gap: 7px;
-      flex-wrap: wrap; padding-top: 9px; border-top: 1px solid rgba(255,255,255,0.1);
+      flex-wrap: wrap; padding-top: 9px; border-top: 1px solid #f0f0f0;
     }
     .meta-chip {
+      font-family: 'Nunito', sans-serif;
       font-size: 0.63rem; font-weight: 800; padding: 3px 10px;
       border-radius: 50px; white-space: nowrap;
     }
-    .chip-group  { background: rgba(56,191,255,0.18); color: var(--blue); border: 1px solid rgba(56,191,255,0.25); }
-    .chip-venue  { background: rgba(255,255,255,0.07); color: #a090d0; }
-    .chip-live   { background: rgba(255,61,107,0.25); color: var(--red); border: 1px solid rgba(255,61,107,0.4); animation: livePulse 1.2s infinite; }
-    .chip-next   { background: rgba(255,226,52,0.2); color: var(--gold); border: 1px solid rgba(255,226,52,0.35); }
-    .chip-ft     { background: rgba(255,255,255,0.08); color: #a090d0; }
-    .chip-ko     { background: rgba(212,125,255,0.2); color: var(--purple); border: 1px solid rgba(212,125,255,0.3); }
-    .chip-win    { background: rgba(0,232,122,0.2); color: var(--green); border: 1px solid rgba(0,232,122,0.3); font-size: 0.61rem; }
+    .chip-group  { background: #fff8e1; color: var(--gold2); }
+    .chip-venue  { background: #f5f5f5; color: #666; }
+    .chip-live   { background: #ffebee; color: var(--red); animation: livePulse 1.2s infinite; }
+    .chip-next   { background: #fffde7; color: var(--gold2); }
+    .chip-ft     { background: #f5f5f5; color: #888; }
+    .chip-ko     { background: #ede7f6; color: var(--purple); }
+    .chip-win    { background: #e8f5e9; color: var(--green); font-size: 0.61rem; }
 
     /* ── SCORERS ── */
     .scorers-row {
       display: grid; grid-template-columns: 1fr 1fr;
       gap: 3px 16px; margin-top: 10px; padding-top: 9px;
-      border-top: 1px dashed rgba(255,255,255,0.1);
+      border-top: 1px dashed #e0e0e0;
     }
     .scorer-item {
-      font-size: 0.71rem; color: #a090d0;
+      font-size: 0.71rem; color: #333;
       display: flex; align-items: center; gap: 5px;
     }
     .scorer-item .ball { font-size: 0.8rem; }
     .scorer-item.home-scorer { justify-content: flex-start; }
     .scorer-item.away-scorer { justify-content: flex-end; flex-direction: row-reverse; }
-    .scorer-name { font-weight: 800; color: #d8ccff; }
-    .scorer-min  { color: #8070a8; }
+    .scorer-name { font-weight: 800; color: #222; }
+    .scorer-min  { color: #999; }
 
     /* ── NO MATCHES ── */
-    .no-matches { text-align: center; padding: 60px 20px; color: #a090d0; }
+    .no-matches { text-align: center; padding: 60px 20px; color: var(--muted); }
     .no-matches .big-icon { font-size: 64px; margin-bottom: 14px; display: block; animation: trophyBob 2s ease-in-out infinite; }
     .no-matches h3 { font-size: 1.2rem; color: var(--text); margin-bottom: 6px; font-weight: 900; }
 
@@ -279,21 +273,21 @@
     .match-card.is-done.has-winner::after {
       content: '';
       position: absolute; inset: 0; pointer-events: none;
-      background: linear-gradient(105deg, transparent 38%, rgba(255,226,52,0.07) 50%, transparent 62%);
+      background: linear-gradient(105deg, transparent 38%, rgba(255,215,0,0.10) 50%, transparent 62%);
       animation: shimmer 2.8s ease-in-out infinite;
     }
     @keyframes shimmer { 0%{transform:translateX(-120%)} 100%{transform:translateX(220%)} }
 
     /* ── FOOTER ── */
     .footer {
-      text-align: center; color: #8070a8; font-size: 0.72rem;
-      padding: 14px 16px; border-top: 1px solid rgba(255,255,255,0.1);
-      background: rgba(0,0,0,0.2);
+      text-align: center; color: #666; font-size: 0.72rem;
+      padding: 14px 16px; border-top: 1px solid #e0e0e0;
+      background: #f5f5f5;
     }
 
     /* ── RESPONSIVE ── */
     @media (max-width: 500px) {
-      .header-titles h1 { font-size: 1.1rem; }
+      .header-titles h1 { font-size: 1.4rem; }
       .match-card { padding: 12px 12px 10px; }
       .team-flag { font-size: 1.7rem; }
       .team-name { font-size: 0.8rem; }
@@ -741,7 +735,7 @@ function renderCard(m, isNext) {
         <div class="score-sep">–</div>
         <div class="score-num">${res.as}</div>
       </div>
-      <div style="font-size:0.6rem;color:var(--muted);margin-top:3px">FULL TIME</div>`;
+      <div style="font-size:0.6rem;color:var(--muted);margin-top:3px">FT · ${fmt12(m.time)}</div>`;
   } else if (st === 'live') {
     midHtml = `<div class="match-time-display live">● LIVE</div><div class="kick-off-lbl" style="color:var(--red)">In Progress</div>`;
   } else {
