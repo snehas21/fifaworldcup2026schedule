@@ -285,6 +285,92 @@
       background: #f5f5f5;
     }
 
+    /* ── TAB NAV ── */
+    .tab-nav {
+      display: flex; gap: 8px; margin-bottom: 18px;
+    }
+    .tab-btn {
+      padding: 10px 20px; border-radius: 50px;
+      border: 2.5px solid #e0e0e0;
+      background: #fff; color: #555; font-size: 0.82rem; font-weight: 800;
+      cursor: pointer; transition: all 0.18s; font-family: 'Nunito', inherit;
+      box-shadow: 0 2px 0 #ddd;
+    }
+    .tab-btn:hover { border-color: #bbb; color: #222; transform: translateY(-1px); }
+    .tab-btn.active {
+      background: var(--gold); color: var(--text); border-color: var(--gold);
+      box-shadow: 0 4px 0 var(--gold2);
+    }
+
+    /* ── GROUP STANDINGS ── */
+    .groups-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 16px;
+    }
+    .group-card {
+      background: #fff; border-radius: 20px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.08);
+      border: 2px solid #f0f0f0; overflow: hidden;
+    }
+    .group-card-header {
+      background: linear-gradient(135deg, #1565C0, #1976D2);
+      color: #fff; padding: 10px 16px;
+      font-family: 'Fredoka One', cursive; font-size: 1rem;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .standings-table {
+      width: 100%; border-collapse: collapse; font-size: 0.78rem;
+    }
+    .standings-table th {
+      background: #f8f9fa; color: #888; font-size: 0.65rem; font-weight: 800;
+      text-transform: uppercase; letter-spacing: 0.06em;
+      padding: 7px 10px; text-align: center; border-bottom: 1px solid #f0f0f0;
+    }
+    .standings-table th.th-team { text-align: left; padding-left: 14px; }
+    .standings-table td {
+      padding: 9px 10px; text-align: center; border-bottom: 1px solid #f8f8f8;
+      color: #333; font-weight: 700;
+    }
+    .standings-table td.td-team {
+      text-align: left; padding-left: 14px; font-weight: 800; color: #1A1A2E;
+      display: flex; align-items: center; gap: 7px;
+    }
+    .standings-table tr:last-child td { border-bottom: none; }
+    .standings-table tr.qualify { background: #f0fdf4; }
+    .standings-table tr.qualify td.td-pos { color: var(--green); font-weight: 900; }
+    .pts-cell { color: #1565C0 !important; font-family: 'Fredoka One', cursive; font-size: 0.95rem !important; }
+    .td-pos { color: #aaa; font-weight: 700; width: 24px; }
+
+    /* ── TOP SCORERS ── */
+    .scorers-section { max-width: 620px; margin: 0 auto; }
+    .scorer-row {
+      display: flex; align-items: center; gap: 14px;
+      background: #fff; border-radius: 16px; padding: 12px 18px;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.07); border: 2px solid #f0f0f0;
+      margin-bottom: 10px; transition: transform 0.15s, box-shadow 0.15s;
+    }
+    .scorer-row:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,0.11); }
+    .scorer-rank {
+      font-family: 'Fredoka One', cursive; font-size: 1.4rem; color: #ddd;
+      min-width: 32px; text-align: center;
+    }
+    .scorer-rank.rank-1 { color: #FFD700; }
+    .scorer-rank.rank-2 { color: #b0b0b0; }
+    .scorer-rank.rank-3 { color: #cd7f32; }
+    .scorer-info { flex: 1; }
+    .scorer-info .s-name { font-weight: 900; color: #1A1A2E; font-size: 0.95rem; }
+    .scorer-info .s-team { font-size: 0.72rem; color: #888; margin-top: 1px; }
+    .scorer-goals {
+      display: flex; align-items: center; gap: 6px;
+    }
+    .goals-num {
+      font-family: 'Fredoka One', cursive; font-size: 1.8rem; color: var(--gold2);
+      line-height: 1;
+    }
+    .goals-label { font-size: 0.65rem; color: #aaa; text-transform: uppercase; letter-spacing: 0.06em; }
+    .scorer-flag { font-size: 1.6rem; }
+
     /* ── RESPONSIVE ── */
     @media (max-width: 500px) {
       .header-titles h1 { font-size: 1.4rem; }
@@ -293,6 +379,7 @@
       .team-name { font-size: 0.8rem; }
       .score-num { font-size: 1.7rem; }
       .next-info .next-teams { font-size: 0.9rem; }
+      .groups-grid { grid-template-columns: 1fr; }
     }
   </style>
 </head>
@@ -309,7 +396,9 @@
       </div>
       <div class="live-pill" id="live-pill"><div class="live-dot"></div> LIVE</div>
     </div>
-    <div class="date-nav" id="date-nav"></div>
+    <div id="date-nav-wrap">
+      <div class="date-nav" id="date-nav"></div>
+    </div>
   </div>
 </header>
 
@@ -790,52 +879,220 @@ function renderCard(m, isNext) {
 }
 
 // ══════════════════════════════════════════════════════════════════
+//  STANDINGS ENGINE
+// ══════════════════════════════════════════════════════════════════
+function buildStandings() {
+  // Map: groupName → { teamName → { flag, p, w, d, l, gf, ga } }
+  const groups = {};
+
+  // Seed all teams from group stage matches
+  MATCHES.filter(m => m.stage === 'Group Stage').forEach(m => {
+    if (!groups[m.group]) groups[m.group] = {};
+    const g = groups[m.group];
+    if (!g[m.home]) g[m.home] = { flag: m.hf, p:0, w:0, d:0, l:0, gf:0, ga:0 };
+    if (!g[m.away]) g[m.away] = { flag: m.af, p:0, w:0, d:0, l:0, gf:0, ga:0 };
+  });
+
+  // Apply results
+  MATCHES.filter(m => m.stage === 'Group Stage').forEach(m => {
+    const res = RESULTS[m.id];
+    if (!res) return;
+    const g = groups[m.group];
+    const H = g[m.home], A = g[m.away];
+    H.p++; A.p++;
+    H.gf += res.hs; H.ga += res.as;
+    A.gf += res.as; A.ga += res.hs;
+    if (res.winner === 'home')      { H.w++; A.l++; }
+    else if (res.winner === 'away') { A.w++; H.l++; }
+    else                            { H.d++; A.d++; }
+  });
+
+  return groups;
+}
+
+function pts(t) { return t.w * 3 + t.d; }
+
+function renderGroupsTab() {
+  const groups = buildStandings();
+  const groupNames = Object.keys(groups).sort();
+
+  let html = '<div class="groups-grid">';
+  groupNames.forEach(gName => {
+    const teams = Object.entries(groups[gName])
+      .map(([name, t]) => ({ name, ...t }))
+      .sort((a, b) => pts(b) - pts(a) || (b.gf - b.ga) - (a.gf - a.ga) || b.gf - a.gf);
+
+    html += `
+    <div class="group-card">
+      <div class="group-card-header">⚽ ${gName}</div>
+      <table class="standings-table">
+        <thead><tr>
+          <th class="th-team" colspan="2">Team</th>
+          <th>P</th><th>W</th><th>D</th><th>L</th><th>GF</th><th>GA</th><th>GD</th><th>Pts</th>
+        </tr></thead>
+        <tbody>`;
+
+    teams.forEach((t, i) => {
+      const qualify = i < 2; // top 2 qualify
+      const gd = t.gf - t.ga;
+      html += `<tr class="${qualify ? 'qualify' : ''}">
+        <td class="td-pos">${i + 1}</td>
+        <td class="td-team">${t.flag} ${t.name}</td>
+        <td>${t.p}</td><td>${t.w}</td><td>${t.d}</td><td>${t.l}</td>
+        <td>${t.gf}</td><td>${t.ga}</td><td>${gd > 0 ? '+' : ''}${gd}</td>
+        <td class="pts-cell">${pts(t)}</td>
+      </tr>`;
+    });
+
+    html += `</tbody></table></div>`;
+  });
+
+  html += '</div><p style="text-align:center;color:#aaa;font-size:0.72rem;margin-top:16px">🟢 Green rows = qualified for Round of 32 &nbsp;·&nbsp; Updated from completed matches</p>';
+  return html;
+}
+
+// ══════════════════════════════════════════════════════════════════
+//  TOP SCORERS ENGINE
+// ══════════════════════════════════════════════════════════════════
+function buildScorers() {
+  // Map playerName → { goals, team, flag, minutes[] }
+  const map = {};
+
+  MATCHES.forEach(m => {
+    const res = RESULTS[m.id];
+    if (!res || !res.scorers) return;
+    res.scorers.forEach(s => {
+      // Strip own goal marker for team attribution
+      const isOG = s.name.includes('(OG)');
+      const team = s.side === 'home' ? m.home : m.away;
+      const flag = s.side === 'home' ? m.hf   : m.af;
+      const key = s.name;
+      if (!map[key]) map[key] = { goals: 0, team, flag, mins: [] };
+      if (!isOG) map[key].goals++;  // OGs count for scorer list but credited separately
+      map[key].mins.push(s.min);
+    });
+  });
+
+  return Object.entries(map)
+    .filter(([, v]) => v.goals > 0)
+    .map(([name, v]) => ({ name, ...v }))
+    .sort((a, b) => b.goals - a.goals || a.mins[0] - b.mins[0]);
+}
+
+function renderScorersTab() {
+  const scorers = buildScorers();
+  if (!scorers.length) return `<div class="no-matches"><span class="big-icon">⚽</span><h3>No goals yet!</h3><p>Check back after matches kick off.</p></div>`;
+
+  const medals = ['🥇','🥈','🥉'];
+  let html = '<div class="scorers-section">';
+  html += `<div class="section-label">⚽ Top Goal Scorers</div>`;
+
+  let prevGoals = -1, displayRank = 0;
+  scorers.forEach((s, i) => {
+    if (s.goals !== prevGoals) { displayRank = i + 1; prevGoals = s.goals; }
+    const rankCls = displayRank <= 3 ? `rank-${displayRank}` : '';
+    const rankDisplay = displayRank <= 3 ? medals[displayRank - 1] : displayRank;
+    html += `
+    <div class="scorer-row">
+      <div class="scorer-rank ${rankCls}">${rankDisplay}</div>
+      <div class="scorer-flag">${s.flag}</div>
+      <div class="scorer-info">
+        <div class="s-name">${s.name}</div>
+        <div class="s-team">${s.team} &nbsp;·&nbsp; Scored: ${s.mins.map(m => m + "'").join(', ')}</div>
+      </div>
+      <div class="scorer-goals">
+        <div>
+          <div class="goals-num">${s.goals}</div>
+          <div class="goals-label">Goal${s.goals !== 1 ? 's' : ''}</div>
+        </div>
+      </div>
+    </div>`;
+  });
+
+  html += '</div>';
+  return html;
+}
+
+// ══════════════════════════════════════════════════════════════════
+//  TAB SYSTEM
+// ══════════════════════════════════════════════════════════════════
+let activeTab = 'schedule';
+
+function renderTabs() {
+  const tabs = [
+    { id: 'schedule', label: '📅 Schedule' },
+    { id: 'groups',   label: '📊 Groups' },
+    { id: 'scorers',  label: '⚽ Top Scorers' },
+  ];
+  let html = '<div class="tab-nav">';
+  tabs.forEach(t => {
+    html += `<button class="tab-btn${activeTab === t.id ? ' active' : ''}" onclick="switchTab('${t.id}')">${t.label}</button>`;
+  });
+  html += '</div>';
+  return html;
+}
+
+function switchTab(tab) {
+  activeTab = tab;
+  const dateNavWrap = document.getElementById('date-nav-wrap');
+  dateNavWrap.style.display = tab === 'schedule' ? '' : 'none';
+  document.getElementById('live-pill').classList.toggle('show', false);
+  renderMain();
+}
+
+// ══════════════════════════════════════════════════════════════════
 //  MAIN RENDER
 // ══════════════════════════════════════════════════════════════════
 function renderMain() {
   const main = document.getElementById('main');
-  const dayMatches = MATCHES.filter(m => m.date === selectedDate);
+  let html = renderTabs();
 
-  if (!dayMatches.length) {
-    main.innerHTML = `<div class="no-matches"><span class="big-icon">🌙</span><h3>No Matches Scheduled</h3><p>Choose another date to see the action!</p></div>`;
+  if (activeTab === 'groups') {
+    html += renderGroupsTab();
+    main.innerHTML = html;
     return;
   }
 
-  // live indicator
+  if (activeTab === 'scorers') {
+    html += renderScorersTab();
+    main.innerHTML = html;
+    return;
+  }
+
+  // ── SCHEDULE TAB ──
+  const dayMatches = MATCHES.filter(m => m.date === selectedDate);
+
+  if (!dayMatches.length) {
+    html += `<div class="no-matches"><span class="big-icon">🌙</span><h3>No Matches Scheduled</h3><p>Choose another date to see the action!</p></div>`;
+    main.innerHTML = html;
+    return;
+  }
+
   const hasLive = dayMatches.some(m => status(m) === 'live');
   document.getElementById('live-pill').classList.toggle('show', hasLive);
 
-  // find next-up
   const upcoming = dayMatches.filter(m => status(m) === 'upcoming');
   const nextMatch = upcoming[0] || null;
 
-  let html = '';
-
-  // today hero
   if (selectedDate === TODAY) {
     html += renderHero(dayMatches);
   } else {
     if (cdInterval) { clearInterval(cdInterval); cdInterval = null; }
   }
 
-  // group by stage in display order
   const stageOrder = ["Group Stage","Round of 32","Round of 16","Quarter-Final","Semi-Final","Third Place","Final"];
   const stages = stageOrder.filter(s => dayMatches.some(m => m.stage === s));
 
   stages.forEach(stage => {
     const cfg = STAGE_CFG[stage];
     const stageMatches = dayMatches.filter(m => m.stage === stage);
-
     if (cfg.label) {
       html += `<div class="round-banner"><div class="round-pill ${cfg.pillCls}">${cfg.label}</div></div>`;
     } else {
       html += `<div class="section-label">⚽ ${stage} — ${friendlyDate(selectedDate)}</div>`;
     }
-
     html += '<div class="matches-list">';
-    stageMatches.forEach(m => {
-      html += renderCard(m, m === nextMatch);
-    });
+    stageMatches.forEach(m => { html += renderCard(m, m === nextMatch); });
     html += '</div>';
   });
 
@@ -847,7 +1104,7 @@ function renderMain() {
 // ══════════════════════════════════════════════════════════════════
 renderDateNav();
 renderMain();
-setInterval(() => { if (selectedDate === TODAY) renderMain(); }, 30000);
+setInterval(() => { if (activeTab === 'schedule' && selectedDate === TODAY) renderMain(); }, 30000);
 </script>
 </body>
 </html>
