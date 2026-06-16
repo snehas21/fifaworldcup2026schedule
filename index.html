@@ -278,6 +278,51 @@
     }
     @keyframes shimmer { 0%{transform:translateX(-120%)} 100%{transform:translateX(220%)} }
 
+    /* ── LIVE COMMENTARY ── */
+    .commentary-wrap {
+      margin-top: 10px; border-top: 1px solid #fcc; padding-top: 10px;
+    }
+    .commentary-header {
+      display: flex; align-items: center; gap: 7px; margin-bottom: 8px;
+    }
+    .commentary-title {
+      font-size: 0.68rem; font-weight: 900; text-transform: uppercase;
+      letter-spacing: 0.1em; color: var(--red);
+    }
+    .live-min-badge {
+      background: var(--red); color: #fff;
+      font-family: 'Fredoka One', cursive; font-size: 0.75rem;
+      padding: 2px 9px; border-radius: 50px;
+      animation: livePulse 1.2s infinite;
+    }
+    .commentary-feed {
+      max-height: 200px; overflow-y: auto;
+      display: flex; flex-direction: column; gap: 5px;
+      scrollbar-width: thin; scrollbar-color: #ffcccc transparent;
+    }
+    .commentary-feed::-webkit-scrollbar { width: 3px; }
+    .commentary-feed::-webkit-scrollbar-thumb { background: #ffcccc; border-radius: 2px; }
+
+    .c-event {
+      display: flex; gap: 8px; align-items: flex-start;
+      padding: 6px 10px; border-radius: 10px;
+      font-size: 0.75rem; line-height: 1.4; background: rgba(255,255,255,0.7);
+      animation: eventIn 0.4s ease;
+    }
+    @keyframes eventIn { from{opacity:0;transform:translateY(-6px)} to{opacity:1;transform:translateY(0)} }
+    .c-event.ev-goal     { background: #fffde7; border-left: 3px solid #FFD700; }
+    .c-event.ev-card     { background: #fff3e0; border-left: 3px solid #FF9800; }
+    .c-event.ev-redcard  { background: #ffebee; border-left: 3px solid #F44336; }
+    .c-event.ev-chance   { background: #f3f4f6; border-left: 3px solid #90caf9; }
+    .c-event.ev-kickoff  { background: #e8f5e9; border-left: 3px solid #4CAF50; }
+    .c-event.ev-halftime { background: #e3f2fd; border-left: 3px solid #1565C0; }
+    .c-event.ev-var      { background: #f3e5f5; border-left: 3px solid #9C27B0; }
+
+    .c-min  { font-family:'Fredoka One',cursive; font-size:0.78rem; color:var(--red); min-width:30px; }
+    .c-icon { font-size:0.9rem; }
+    .c-text { color:#333; flex:1; }
+    .c-text strong { color:#1A1A2E; }
+
     /* ── FOOTER ── */
     .footer {
       text-align: center; color: #666; font-size: 0.72rem;
@@ -821,6 +866,120 @@ function renderHero(dayMatches) {
 }
 
 // ══════════════════════════════════════════════════════════════════
+//  LIVE COMMENTARY ENGINE
+// ══════════════════════════════════════════════════════════════════
+// Deterministic seeded random so events don't shuffle on re-render
+function seededRand(seed) {
+  let s = seed;
+  return () => { s = (s * 1664525 + 1013904223) & 0xffffffff; return (s >>> 0) / 0xffffffff; };
+}
+
+const COMMENTARY_EVENTS = [
+  // type, icon, weight, templates  (%H=home, %A=away)
+  { t:'chance', icon:'🥅', w:4, tpl:[
+    '<strong>%H</strong> win a corner — the crowd roars!',
+    '<strong>%A</strong> break forward on the counter-attack!',
+    'Shot from distance by <strong>%H</strong> — straight at the keeper!',
+    '<strong>%A</strong> hit the crossbar! What a chance!',
+    'Great save from the %H goalkeeper to deny <strong>%A</strong>!',
+    '<strong>%H</strong> winning free-kick just outside the box…',
+    'Header wide from <strong>%A</strong> after a corner!',
+    '<strong>%H</strong> attacking down the left flank — cross comes in!',
+    'One-on-one for <strong>%A</strong> — saved brilliantly!',
+    '<strong>%H</strong> pile on the pressure — it\'s relentless!',
+  ]},
+  { t:'card', icon:'🟨', w:2, tpl:[
+    'Yellow card for <strong>%H</strong> — reckless challenge.',
+    'Booking for <strong>%A</strong> — stops a dangerous counter.',
+    '<strong>%H</strong> player cautioned for dissent.',
+    'Referee shows yellow to <strong>%A</strong> after a late tackle.',
+  ]},
+  { t:'var', icon:'📺', w:1, tpl:[
+    'VAR check in progress — referee reviewing the incident…',
+    'Play stopped for a VAR review — fans on edge!',
+    'VAR overturns the decision — <strong>%H</strong> given offside.',
+    'After VAR review, penalty overturned. Play continues!',
+  ]},
+  { t:'chance', icon:'⚡', w:3, tpl:[
+    'Fast break by <strong>%A</strong> — three-on-two! Cleared at the last!',
+    '<strong>%H</strong> hammers the post! So close!',
+    'Brilliant passing move by <strong>%H</strong> — cut off just in time!',
+    '<strong>%A</strong> long-range effort — keeper tips over the bar!',
+    'End-to-end action! Both teams pushing hard!',
+    '<strong>%H</strong> appeal for a penalty — referee waves it away!',
+  ]},
+];
+
+const HALFTIME_EVENTS = [
+  { t:'halftime', icon:'🔔', tpl:'Half-time whistle! Both teams head to the dressing rooms.' },
+];
+
+const KICKOFF_EVENTS = [
+  { t:'kickoff', icon:'⚽', tpl:'Kick-off! The match is underway! 🎉' },
+  { t:'kickoff', icon:'⚽', tpl:'The second half is underway! Can the momentum shift?' },
+];
+
+function generateCommentary(m) {
+  const start = matchStart(m);
+  const now   = new Date();
+  const elapsedMs = now - start;
+  const elapsedMin = Math.floor(elapsedMs / 60000);
+  const displayMin = Math.min(elapsedMin, elapsedMin > 45 ? Math.max(45, elapsedMin) : 45);
+
+  // Generate a sequence of events for minutes 0..elapsedMin
+  const events = [];
+  const rng = seededRand(m.id.split('').reduce((a, c) => a + c.charCodeAt(0), 0) * 7);
+
+  // kick-off at minute 0
+  events.push({ min: 0, ...KICKOFF_EVENTS[0], text: KICKOFF_EVENTS[0].tpl });
+
+  // generate random events every ~4–8 minutes
+  let nextEvent = Math.floor(rng() * 4) + 3;
+  while (nextEvent <= Math.min(elapsedMin, 90)) {
+    if (nextEvent === 45 || nextEvent === 46) {
+      events.push({ min:45, t:'halftime', icon:'🔔', text: HALFTIME_EVENTS[0].tpl });
+      if (elapsedMin > 46) {
+        events.push({ min:46, ...KICKOFF_EVENTS[1], text: KICKOFF_EVENTS[1].tpl });
+      }
+      nextEvent = 47 + Math.floor(rng() * 4) + 3;
+      continue;
+    }
+    // pick event type weighted
+    const total = COMMENTARY_EVENTS.reduce((s, e) => s + e.w, 0);
+    let pick = rng() * total, evType = COMMENTARY_EVENTS[0];
+    for (const e of COMMENTARY_EVENTS) { pick -= e.w; if (pick <= 0) { evType = e; break; } }
+    const tpl = evType.tpl[Math.floor(rng() * evType.tpl.length)];
+    const text = tpl.replace(/%H/g, m.home).replace(/%A/g, m.away);
+    events.push({ min: nextEvent, t: evType.t, icon: evType.icon, text });
+    nextEvent += Math.floor(rng() * 5) + 3;
+  }
+
+  // Latest events first (top of feed)
+  const sorted = events.slice().reverse();
+  const minDisplay = elapsedMin > 90 ? '90+' : elapsedMin + "'";
+
+  let html = `
+  <div class="commentary-wrap">
+    <div class="commentary-header">
+      <span class="commentary-title">🔴 Live Commentary</span>
+      <span class="live-min-badge">${minDisplay}</span>
+    </div>
+    <div class="commentary-feed">`;
+
+  sorted.forEach(ev => {
+    const minStr = ev.min === 0 ? 'KO' : ev.min === 46 ? '46\'' : ev.min + "'";
+    html += `<div class="c-event ev-${ev.t}">
+      <span class="c-min">${minStr}</span>
+      <span class="c-icon">${ev.icon}</span>
+      <span class="c-text">${ev.text}</span>
+    </div>`;
+  });
+
+  html += `</div></div>`;
+  return html;
+}
+
+// ══════════════════════════════════════════════════════════════════
 //  WIN PROBABILITY  (FIFA ranking-based Elo model, June 2026)
 // ══════════════════════════════════════════════════════════════════
 const RATING = {
@@ -881,7 +1040,8 @@ function renderCard(m, isNext) {
       </div>
       <div style="font-size:0.6rem;color:var(--muted);margin-top:3px">FT · ${fmt12(m.time)}</div>`;
   } else if (st === 'live') {
-    midHtml = `<div class="match-time-display live">● LIVE</div><div class="kick-off-lbl" style="color:var(--red)">In Progress</div>`;
+    const elapsed = Math.min(90, Math.floor((new Date() - matchStart(m)) / 60000));
+    midHtml = `<div class="match-time-display live">● ${elapsed}'</div><div class="kick-off-lbl" style="color:var(--red)">LIVE</div>`;
   } else {
     // win probability for upcoming matches
     const prob = winProb(m.home, m.away);
@@ -947,6 +1107,7 @@ function renderCard(m, isNext) {
       </div>
     </div>
     ${scorersHtml}
+    ${st === 'live' ? generateCommentary(m) : ''}
     <div class="card-meta">${chips}</div>
   </div>`;
 }
@@ -1175,7 +1336,13 @@ function renderMain() {
 // ══════════════════════════════════════════════════════════════════
 renderDateNav();
 renderMain();
-setInterval(() => { if (activeTab === 'schedule' && selectedDate === TODAY) renderMain(); }, 30000);
+// Refresh every 30s on schedule tab — updates live commentary minute counter + new events
+setInterval(() => {
+  if (activeTab !== 'schedule') return;
+  const dayMatches = MATCHES.filter(m => m.date === selectedDate);
+  const hasLive = dayMatches.some(m => status(m) === 'live');
+  if (hasLive || selectedDate === TODAY) renderMain();
+}, 30000);
 </script>
 </body>
 </html>
