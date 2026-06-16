@@ -243,21 +243,45 @@
     .chip-ko     { background: #ede7f6; color: var(--purple); }
     .chip-win    { background: #e8f5e9; color: var(--green); font-size: 0.61rem; }
 
-    /* ── SCORERS ── */
-    .scorers-row {
-      display: grid; grid-template-columns: 1fr 1fr;
-      gap: 3px 16px; margin-top: 10px; padding-top: 9px;
-      border-top: 1px dashed #e0e0e0;
+    /* ── WINNER BANNER ── */
+    .winner-banner {
+      display: flex; align-items: center; gap: 10px;
+      background: linear-gradient(90deg,#fff8e1,#fffde7);
+      border: 2px solid #FFD700; border-radius: 12px;
+      padding: 9px 14px; margin-top: 10px;
+      box-shadow: 0 2px 8px rgba(255,215,0,0.2);
     }
-    .scorer-item {
-      font-size: 0.71rem; color: #333;
-      display: flex; align-items: center; gap: 5px;
+    .winner-banner.draw-banner { background: #f5f5f5; border-color: #ccc; box-shadow: none; }
+    .wb-crown { font-size: 1.3rem; }
+    .wb-text  { font-size: 0.85rem; color: #555; }
+    .wb-text strong { color: #1A1A2E; font-size: 0.95rem; }
+
+    /* ── SCORER DETAIL ROWS ── */
+    .scorers-detail { margin-top: 8px; }
+    .scorer-team-label {
+      font-size: 0.68rem; font-weight: 900; text-transform: uppercase;
+      letter-spacing: 0.07em; color: #999; padding: 6px 4px 3px;
     }
-    .scorer-item .ball { font-size: 0.8rem; }
-    .scorer-item.home-scorer { justify-content: flex-start; }
-    .scorer-item.away-scorer { justify-content: flex-end; flex-direction: row-reverse; }
-    .scorer-name { font-weight: 800; color: #222; }
-    .scorer-min  { color: #999; }
+    .scorer-detail-row {
+      display: flex; align-items: center; gap: 8px;
+      padding: 6px 8px; border-radius: 8px; margin-bottom: 3px;
+      background: #f9f9f9;
+    }
+    .scorer-detail-row:hover { background: #f0f0f0; }
+    .scorer-detail-row.og-row { background: #fff3e0; }
+    .sd-icon { font-size: 1rem; }
+    .sd-name { font-weight: 800; color: #1A1A2E; font-size: 0.83rem; flex: 1; }
+    .sd-how  {
+      font-size: 0.68rem; color: #fff; font-weight: 800; padding: 2px 9px;
+      border-radius: 50px; background: #1565C0; white-space: nowrap;
+    }
+    .sd-min  { font-family:'Fredoka One',cursive; font-size:0.85rem; color:#bbb; min-width:28px; text-align:right; }
+
+    /* colour-coded "how" badges */
+    .sd-how.how-penalty   { background: #c62828; }
+    .sd-how.how-freekick  { background: #6a1b9a; }
+    .sd-how.how-header    { background: #2e7d32; }
+    .sd-how.how-owngoal   { background: #e65100; }
 
     /* ── NO MATCHES ── */
     .no-matches { text-align: center; padding: 60px 20px; color: var(--muted); }
@@ -677,41 +701,41 @@ const MATCHES = [
 const RESULTS = {
   // June 11
   m01: { hs:2, as:1, winner:"home",
-    scorers:[ {name:"Raúl Jiménez",min:23,side:"home"},{name:"Hirving Lozano",min:67,side:"home"},{name:"Enner Valencia",min:80,side:"away"} ] },
+    scorers:[ {name:"Raúl Jiménez",min:23,how:"Header",side:"home"},{name:"Hirving Lozano",min:67,how:"Left foot",side:"home"},{name:"Enner Valencia",min:80,how:"Penalty",side:"away"} ] },
   m02: { hs:3, as:0, winner:"home",
-    scorers:[ {name:"Christian Pulisic",min:11,side:"home"},{name:"Gio Reyna",min:44,side:"home"},{name:"Folarin Balogun",min:78,side:"home"} ] },
+    scorers:[ {name:"Christian Pulisic",min:11,how:"Right foot",side:"home"},{name:"Gio Reyna",min:44,how:"Free kick",side:"home"},{name:"Folarin Balogun",min:78,how:"Header",side:"home"} ] },
   m03: { hs:1, as:1, winner:"draw",
-    scorers:[ {name:"Alphonso Davies",min:36,side:"home"},{name:"Josef Martínez",min:62,side:"away"} ] },
+    scorers:[ {name:"Alphonso Davies",min:36,how:"Left foot",side:"home"},{name:"Josef Martínez",min:62,how:"Header",side:"away"} ] },
 
   // June 12
   m04: { hs:2, as:0, winner:"home",
-    scorers:[ {name:"Lautaro Martínez",min:28,side:"home"},{name:"Julián Álvarez",min:55,side:"home"} ] },
+    scorers:[ {name:"Lautaro Martínez",min:28,how:"Right foot",side:"home"},{name:"Julián Álvarez",min:55,how:"Left foot",side:"home"} ] },
   m05: { hs:1, as:1, winner:"draw",
-    scorers:[ {name:"Kylian Mbappé",min:44,side:"home"},{name:"Achraf Hakimi",min:71,side:"away"} ] },
+    scorers:[ {name:"Kylian Mbappé",min:44,how:"Right foot",side:"home"},{name:"Achraf Hakimi",min:71,how:"Right foot",side:"away"} ] },
   m06: { hs:3, as:1, winner:"home",
-    scorers:[ {name:"Vinicius Jr.",min:18,side:"home"},{name:"Rodrygo",min:42,side:"home"},{name:"Daichi Kamada",min:64,side:"away"},{name:"Raphinha",min:89,side:"home"} ] },
+    scorers:[ {name:"Vinicius Jr.",min:18,how:"Left foot",side:"home"},{name:"Rodrygo",min:42,how:"Header",side:"home"},{name:"Daichi Kamada",min:64,how:"Right foot",side:"away"},{name:"Raphinha",min:89,how:"Free kick",side:"home"} ] },
   m07: { hs:2, as:2, winner:"draw",
-    scorers:[ {name:"Kai Havertz",min:21,side:"home"},{name:"Hwang Hee-Chan",min:33,side:"away"},{name:"Thomas Müller",min:61,side:"home"},{name:"Son Heung-min",min:88,side:"away"} ] },
+    scorers:[ {name:"Kai Havertz",min:21,how:"Header",side:"home"},{name:"Hwang Hee-Chan",min:33,how:"Right foot",side:"away"},{name:"Thomas Müller",min:61,how:"Right foot",side:"home"},{name:"Son Heung-min",min:88,how:"Left foot",side:"away"} ] },
 
   // June 13
   m08: { hs:4, as:0, winner:"home",
-    scorers:[ {name:"Pedri",min:14,side:"home"},{name:"Álvaro Morata",min:30,side:"home"},{name:"Pedri",min:55,side:"home"},{name:"Lamine Yamal",min:82,side:"home"} ] },
+    scorers:[ {name:"Pedri",min:14,how:"Right foot",side:"home"},{name:"Álvaro Morata",min:30,how:"Header",side:"home"},{name:"Pedri",min:55,how:"Left foot",side:"home"},{name:"Lamine Yamal",min:82,how:"Right foot",side:"home"} ] },
   m09: { hs:2, as:0, winner:"home",
-    scorers:[ {name:"Jude Bellingham",min:25,side:"home"},{name:"Harry Kane",min:73,side:"home"} ] },
+    scorers:[ {name:"Jude Bellingham",min:25,how:"Right foot",side:"home"},{name:"Harry Kane",min:73,how:"Penalty",side:"home"} ] },
   m10: { hs:3, as:0, winner:"home",
-    scorers:[ {name:"Diogo Jota",min:9,side:"home"},{name:"Bruno Fernandes",min:38,side:"home"},{name:"Rafael Leão",min:77,side:"home"} ] },
+    scorers:[ {name:"Diogo Jota",min:9,how:"Right foot",side:"home"},{name:"Bruno Fernandes",min:38,how:"Free kick",side:"home"},{name:"Rafael Leão",min:77,how:"Left foot",side:"home"} ] },
   m11: { hs:2, as:1, winner:"home",
-    scorers:[ {name:"Memphis Depay",min:18,side:"home"},{name:"Wilfried Zaha",min:52,side:"away"},{name:"Cody Gakpo",min:84,side:"home"} ] },
+    scorers:[ {name:"Memphis Depay",min:18,how:"Penalty",side:"home"},{name:"Wilfried Zaha",min:52,how:"Right foot",side:"away"},{name:"Cody Gakpo",min:84,how:"Header",side:"home"} ] },
 
   // June 14
   m12: { hs:1, as:0, winner:"home",
-    scorers:[ {name:"Ivan Perišić",min:59,side:"home"} ] },
+    scorers:[ {name:"Ivan Perišić",min:59,how:"Header",side:"home"} ] },
   m13: { hs:2, as:1, winner:"home",
-    scorers:[ {name:"Darwin Núñez",min:16,side:"home"},{name:"Sardar Azmoun",min:48,side:"away"},{name:"Rodrigo Bentancur",min:85,side:"home"} ] },
+    scorers:[ {name:"Darwin Núñez",min:16,how:"Header",side:"home"},{name:"Sardar Azmoun",min:48,how:"Right foot",side:"away"},{name:"Rodrigo Bentancur",min:85,how:"Right foot",side:"home"} ] },
   m14: { hs:1, as:2, winner:"away",
-    scorers:[ {name:"Luis Díaz",min:34,side:"home"},{name:"Mathew Ryan (OG)",min:41,side:"home"},{name:"Martin Boyle",min:67,side:"away"},{name:"Mitch Duke",min:90,side:"away"} ] },
+    scorers:[ {name:"Luis Díaz",min:34,how:"Left foot",side:"home"},{name:"Mathew Ryan (OG)",min:41,how:"Own goal",side:"home"},{name:"Martin Boyle",min:67,how:"Right foot",side:"away"},{name:"Mitch Duke",min:90,how:"Header",side:"away"} ] },
   m15: { hs:3, as:0, winner:"home",
-    scorers:[ {name:"Romelu Lukaku",min:12,side:"home"},{name:"Kevin De Bruyne",min:45,side:"home"},{name:"Yannick Carrasco",min:78,side:"home"} ] },
+    scorers:[ {name:"Romelu Lukaku",min:12,how:"Header",side:"home"},{name:"Kevin De Bruyne",min:45,how:"Right foot",side:"home"},{name:"Yannick Carrasco",min:78,how:"Left foot",side:"home"} ] },
 };
 
 // ══════════════════════════════════════════════════════════════════
@@ -1069,28 +1093,70 @@ function renderCard(m, isNext) {
   if (m.stage !== 'Group Stage') chips += `<span class="meta-chip chip-ko">${m.stage}</span>`;
   if (st === 'live')   chips += `<span class="meta-chip chip-live">● LIVE</span>`;
   else if (isNext && st === 'upcoming') chips += `<span class="meta-chip chip-next">⏰ Next Up</span>`;
-  else if (st === 'done') chips += `<span class="meta-chip chip-ft">✓ FT</span>`;
-  if (st === 'done' && res) {
-    if (res.winner === 'home')   chips += `<span class="meta-chip chip-win">🏅 ${m.home} Win</span>`;
-    else if (res.winner === 'away') chips += `<span class="meta-chip chip-win">🏅 ${m.away} Win</span>`;
-    else                             chips += `<span class="meta-chip chip-win">🤝 Draw</span>`;
-  }
+  else if (st === 'done') chips += `<span class="meta-chip chip-ft">✓ Full Time</span>`;
   chips += `<span class="meta-chip chip-venue">📍 ${m.venue}</span>`;
 
-  // scorers
+  // winner banner + scorers for completed matches
+  const HOW_ICON = { "Penalty":"🎯", "Free kick":"🌀", "Header":"🤜", "Own goal":"😬", "Left foot":"🦶", "Right foot":"🦶" };
+  const HOW_CLS  = { "Penalty":"how-penalty", "Free kick":"how-freekick", "Header":"how-header", "Own goal":"how-owngoal" };
   let scorersHtml = '';
-  if (st === 'done' && res && res.scorers && res.scorers.length) {
-    const homeScorers = res.scorers.filter(s => s.side === 'home');
-    const awayScorers = res.scorers.filter(s => s.side === 'away');
-    const rows = Math.max(homeScorers.length, awayScorers.length);
-    let rowsHtml = '';
-    for (let i = 0; i < rows; i++) {
-      const hs = homeScorers[i], as = awayScorers[i];
-      rowsHtml += `
-        <div class="scorer-item home-scorer">${hs ? `<span class="ball">⚽</span><span class="scorer-name">${hs.name}</span><span class="scorer-min">${hs.min}'</span>` : ''}</div>
-        <div class="scorer-item away-scorer">${as ? `<span class="scorer-min">${as.min}'</span><span class="scorer-name">${as.name}</span><span class="ball">⚽</span>` : ''}</div>`;
+  if (st === 'done' && res) {
+    // Winner banner
+    let winnerBanner = '';
+    if (res.winner === 'home')
+      winnerBanner = `<div class="winner-banner"><span class="wb-crown">🏆</span><span class="wb-text"><strong>${m.home}</strong> won ${res.hs}–${res.as}</span></div>`;
+    else if (res.winner === 'away')
+      winnerBanner = `<div class="winner-banner"><span class="wb-crown">🏆</span><span class="wb-text"><strong>${m.away}</strong> won ${res.as}–${res.hs}</span></div>`;
+    else
+      winnerBanner = `<div class="winner-banner draw-banner"><span class="wb-crown">🤝</span><span class="wb-text">Match drawn ${res.hs}–${res.as}</span></div>`;
+
+    // Scorers list — one per row, full width, grouped by team
+    let scorerRows = '';
+    if (res.scorers && res.scorers.length) {
+      const homeScorers = res.scorers.filter(s => s.side === 'home' && !s.name.includes('(OG)'));
+      const awayScorers = res.scorers.filter(s => s.side === 'away' && !s.name.includes('(OG)'));
+      const ogs = res.scorers.filter(s => s.name.includes('(OG)'));
+
+      if (homeScorers.length) {
+        scorerRows += `<div class="scorer-team-label">${m.hf} ${m.home}</div>`;
+        homeScorers.forEach(s => {
+          const icon = HOW_ICON[s.how] || '⚽';
+          const howCls = HOW_CLS[s.how] || '';
+          scorerRows += `<div class="scorer-detail-row">
+            <span class="sd-icon">${icon}</span>
+            <span class="sd-name">${s.name}</span>
+            <span class="sd-how ${howCls}">${s.how || 'Goal'}</span>
+            <span class="sd-min">${s.min}'</span>
+          </div>`;
+        });
+      }
+      if (awayScorers.length) {
+        scorerRows += `<div class="scorer-team-label">${m.af} ${m.away}</div>`;
+        awayScorers.forEach(s => {
+          const icon = HOW_ICON[s.how] || '⚽';
+          const howCls = HOW_CLS[s.how] || '';
+          scorerRows += `<div class="scorer-detail-row">
+            <span class="sd-icon">${icon}</span>
+            <span class="sd-name">${s.name}</span>
+            <span class="sd-how ${howCls}">${s.how || 'Goal'}</span>
+            <span class="sd-min">${s.min}'</span>
+          </div>`;
+        });
+      }
+      if (ogs.length) {
+        ogs.forEach(s => {
+          const side = s.side === 'home' ? m.home : m.away;
+          const flag = s.side === 'home' ? m.hf : m.af;
+          scorerRows += `<div class="scorer-detail-row og-row">
+            <span class="sd-icon">😬</span>
+            <span class="sd-name">${s.name}</span>
+            <span class="sd-how">Own Goal (${flag} ${side})</span>
+            <span class="sd-min">${s.min}'</span>
+          </div>`;
+        });
+      }
     }
-    scorersHtml = `<div class="scorers-row">${rowsHtml}</div>`;
+    scorersHtml = `${winnerBanner}<div class="scorers-detail">${scorerRows}</div>`;
   }
 
   return `
