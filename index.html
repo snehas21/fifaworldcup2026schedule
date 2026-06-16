@@ -371,6 +371,26 @@
     .goals-label { font-size: 0.65rem; color: #aaa; text-transform: uppercase; letter-spacing: 0.06em; }
     .scorer-flag { font-size: 1.6rem; }
 
+    /* ── WIN PROBABILITY BAR ── */
+    .pred-bar-wrap {
+      display: flex; align-items: center; gap: 5px; margin-top: 7px;
+    }
+    .pred-bar {
+      flex: 1; display: flex; height: 7px; border-radius: 50px; overflow: hidden; background: #f0f0f0;
+    }
+    .pred-seg { height: 100%; transition: width 0.4s ease; }
+    .draw-seg { background: #e0e0e0; }
+    .pred-label {
+      font-size: 0.58rem; font-weight: 800; white-space: nowrap;
+      color: #333; max-width: 56px; overflow: hidden; text-overflow: ellipsis;
+    }
+    .pred-label.pred-home { text-align: right; }
+    .pred-label.pred-away { text-align: left; }
+    .pred-pcts {
+      display: flex; justify-content: space-between;
+      font-size: 0.6rem; font-weight: 800; margin-top: 3px; color: #aaa;
+    }
+
     /* ── RESPONSIVE ── */
     @media (max-width: 500px) {
       .header-titles h1 { font-size: 1.4rem; }
@@ -801,6 +821,41 @@ function renderHero(dayMatches) {
 }
 
 // ══════════════════════════════════════════════════════════════════
+//  WIN PROBABILITY  (FIFA ranking-based Elo model, June 2026)
+// ══════════════════════════════════════════════════════════════════
+const RATING = {
+  // Top tier
+  "France":2000,"Brazil":1970,"Argentina":1960,"England":1940,"Spain":1930,
+  "Portugal":1910,"Netherlands":1890,"Germany":1880,"Belgium":1840,"Croatia":1800,
+  // Strong
+  "Uruguay":1780,"Mexico":1760,"USA":1750,"Colombia":1740,"Japan":1730,
+  "Morocco":1720,"Senegal":1710,"South Korea":1700,"Switzerland":1690,"Denmark":1680,
+  "Austria":1670,"Australia":1650,"Ecuador":1640,"Serbia":1630,"Poland":1620,
+  // Mid
+  "Turkey":1600,"Ukraine":1590,"Canada":1580,"Peru":1560,"Chile":1550,
+  "Ivory Coast":1540,"Nigeria":1530,"Egypt":1520,"Ghana":1510,"Cameroon":1500,
+  "Iran":1490,"Saudi Arabia":1480,"South Africa":1470,"Paraguay":1460,"Bolivia":1440,
+  "Venezuela":1430,"Costa Rica":1420,"Honduras":1410,"Panama":1400,"Iraq":1390,
+  // Others
+  "Qatar":1350,"New Zealand":1340,"Jamaica":1330,
+};
+const DEFAULT_RATING = 1400;
+
+function winProb(home, away) {
+  const rH = (RATING[home] || DEFAULT_RATING) + 50; // slight home advantage
+  const rA = (RATING[away] || DEFAULT_RATING);
+  const diff = rH - rA;
+  // Elo win probability for home
+  const pH = 1 / (1 + Math.pow(10, -diff / 400));
+  // Estimate draw probability (peaks when teams are close)
+  const drawBase = 0.26 - Math.abs(diff) / 3000;
+  const pDraw = Math.max(0.10, Math.min(0.30, drawBase));
+  const pHadj = Math.round((pH - pDraw / 2) * 100);
+  const pAadj = 100 - pHadj - Math.round(pDraw * 100);
+  return { home: Math.max(5, pHadj), draw: Math.round(pDraw * 100), away: Math.max(5, pAadj) };
+}
+
+// ══════════════════════════════════════════════════════════════════
 //  MATCH CARD
 // ══════════════════════════════════════════════════════════════════
 function renderCard(m, isNext) {
@@ -828,7 +883,25 @@ function renderCard(m, isNext) {
   } else if (st === 'live') {
     midHtml = `<div class="match-time-display live">● LIVE</div><div class="kick-off-lbl" style="color:var(--red)">In Progress</div>`;
   } else {
-    midHtml = `<div class="kick-off-lbl">Kick-off</div><div class="match-time-display">${fmt12(m.time)}</div>`;
+    // win probability for upcoming matches
+    const prob = winProb(m.home, m.away);
+    const favHome = prob.home > 55, favAway = prob.away > 55, tight = !favHome && !favAway;
+    const predBar = `
+      <div class="pred-bar-wrap">
+        <div class="pred-label pred-home" style="opacity:${favHome?1:tight?0.6:0.35}">${favHome?'⭐ ':tight?'':''}${m.home}</div>
+        <div class="pred-bar">
+          <div class="pred-seg home-seg" style="width:${prob.home}%;background:${favHome?'#1565C0':tight?'#90caf9':'#bbdefb'}"></div>
+          <div class="pred-seg draw-seg" style="width:${prob.draw}%"></div>
+          <div class="pred-seg away-seg" style="width:${prob.away}%;background:${favAway?'#c62828':tight?'#ef9a9a':'#ffcdd2'}"></div>
+        </div>
+        <div class="pred-label pred-away" style="opacity:${favAway?1:tight?0.6:0.35}">${favAway?'⭐ ':tight?'':''}${m.away}</div>
+      </div>
+      <div class="pred-pcts">
+        <span style="color:${favHome?'#1565C0':'#888'}">${prob.home}%</span>
+        <span style="color:#888">${prob.draw}% Draw</span>
+        <span style="color:${favAway?'#c62828':'#888'}">${prob.away}%</span>
+      </div>`;
+    midHtml = `<div class="kick-off-lbl">Kick-off</div><div class="match-time-display">${fmt12(m.time)}</div>${predBar}`;
   }
 
   // badge chips
@@ -955,26 +1028,23 @@ function renderGroupsTab() {
 //  TOP SCORERS ENGINE
 // ══════════════════════════════════════════════════════════════════
 function buildScorers() {
-  // Map playerName → { goals, team, flag, minutes[] }
+  // Only count non-own-goal strikes scored in this World Cup (from RESULTS)
   const map = {};
 
   MATCHES.forEach(m => {
     const res = RESULTS[m.id];
     if (!res || !res.scorers) return;
     res.scorers.forEach(s => {
-      // Strip own goal marker for team attribution
-      const isOG = s.name.includes('(OG)');
+      if (s.name.includes('(OG)')) return; // skip own goals entirely
       const team = s.side === 'home' ? m.home : m.away;
       const flag = s.side === 'home' ? m.hf   : m.af;
-      const key = s.name;
-      if (!map[key]) map[key] = { goals: 0, team, flag, mins: [] };
-      if (!isOG) map[key].goals++;  // OGs count for scorer list but credited separately
-      map[key].mins.push(s.min);
+      if (!map[s.name]) map[s.name] = { goals: 0, team, flag, mins: [] };
+      map[s.name].goals++;
+      map[s.name].mins.push(s.min);
     });
   });
 
   return Object.entries(map)
-    .filter(([, v]) => v.goals > 0)
     .map(([name, v]) => ({ name, ...v }))
     .sort((a, b) => b.goals - a.goals || a.mins[0] - b.mins[0]);
 }
@@ -985,7 +1055,8 @@ function renderScorersTab() {
 
   const medals = ['🥇','🥈','🥉'];
   let html = '<div class="scorers-section">';
-  html += `<div class="section-label">⚽ Top Goal Scorers</div>`;
+  html += `<div class="section-label">⚽ Top Goal Scorers — FIFA World Cup 2026</div>`;
+  html += `<p style="font-size:0.72rem;color:#888;margin-bottom:14px;text-align:center">Goals scored in this tournament only &nbsp;·&nbsp; Own goals excluded &nbsp;·&nbsp; Based on completed matches</p>`;
 
   let prevGoals = -1, displayRank = 0;
   scorers.forEach((s, i) => {
