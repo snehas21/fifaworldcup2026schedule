@@ -271,11 +271,12 @@
     .scorer-detail-row.og-row { background: #fff3e0; }
     .sd-icon { font-size: 1rem; }
     .sd-name { font-weight: 800; color: #1A1A2E; font-size: 0.83rem; flex: 1; }
+    .sd-count { display:inline-block; margin-left:6px; font-family:'Fredoka One',cursive; font-size:0.72rem; color:#fff; background: var(--gold2); border-radius: 10px; padding: 1px 7px; }
     .sd-how  {
       font-size: 0.68rem; color: #fff; font-weight: 800; padding: 2px 9px;
       border-radius: 50px; background: #1565C0; white-space: nowrap;
     }
-    .sd-min  { font-family:'Fredoka One',cursive; font-size:0.85rem; color:#bbb; min-width:28px; text-align:right; }
+    .sd-min  { font-family:'Fredoka One',cursive; font-size:0.85rem; color:#bbb; min-width:28px; text-align:right; white-space:nowrap; }
 
     /* colour-coded "how" badges */
     .sd-how.how-penalty   { background: #c62828; }
@@ -736,6 +737,32 @@ const RESULTS = {
     scorers:[ {name:"Luis Díaz",min:34,how:"Left foot",side:"home"},{name:"Mathew Ryan (OG)",min:41,how:"Own goal",side:"home"},{name:"Martin Boyle",min:67,how:"Right foot",side:"away"},{name:"Mitch Duke",min:90,how:"Header",side:"away"} ] },
   m15: { hs:3, as:0, winner:"home",
     scorers:[ {name:"Romelu Lukaku",min:12,how:"Header",side:"home"},{name:"Kevin De Bruyne",min:45,how:"Right foot",side:"home"},{name:"Yannick Carrasco",min:78,how:"Left foot",side:"home"} ] },
+
+  // June 15
+  m16: { hs:2, as:1, winner:"home",
+    scorers:[ {name:"Breel Embolo",min:22,how:"Right foot",side:"home"},{name:"Vincent Aboubakar",min:51,how:"Penalty",side:"away"},{name:"Dan Ndoye",min:73,how:"Left foot",side:"home"} ] },
+  m17: { hs:1, as:1, winner:"draw",
+    scorers:[ {name:"Santiago Giménez",min:39,how:"Header",side:"home"},{name:"Salomón Rondón",min:64,how:"Right foot",side:"away"} ] },
+  m18: { hs:2, as:0, winner:"home",
+    scorers:[ {name:"Enner Valencia",min:17,how:"Penalty",side:"home"},{name:"Moisés Caicedo",min:70,how:"Right foot",side:"home"} ] },
+  m19: { hs:2, as:2, winner:"draw",
+    scorers:[ {name:"Christian Pulisic",min:8,how:"Left foot",side:"home"},{name:"Jonathan David",min:31,how:"Right foot",side:"away"},{name:"Folarin Balogun",min:58,how:"Header",side:"home"},{name:"Alphonso Davies",min:84,how:"Free kick",side:"away"} ] },
+
+  // June 16
+  m20: { hs:3, as:1, winner:"home",
+    scorers:[ {name:"Lautaro Martínez",min:12,how:"Right foot",side:"home"},{name:"Julián Álvarez",min:29,how:"Left foot",side:"home"},{name:"Nicolas Pépé",min:55,how:"Right foot",side:"away"},{name:"Lautaro Martínez",min:81,how:"Header",side:"home"} ] },
+  m21: { hs:2, as:0, winner:"home",
+    scorers:[ {name:"Kylian Mbappé",min:33,how:"Right foot",side:"home"},{name:"Ousmane Dembélé",min:69,how:"Left foot",side:"home"} ] },
+  m22: { hs:4, as:1, winner:"home",
+    scorers:[ {name:"Vinicius Jr.",min:15,how:"Left foot",side:"home"},{name:"Rodrygo",min:24,how:"Right foot",side:"home"},{name:"Son Heung-min",min:48,how:"Penalty",side:"away"},{name:"Endrick",min:66,how:"Header",side:"home"},{name:"Vinicius Jr.",min:88,how:"Right foot",side:"home"} ] },
+  m23: { hs:1, as:1, winner:"draw",
+    scorers:[ {name:"Jamal Musiala",min:41,how:"Right foot",side:"home"},{name:"Takefusa Kubo",min:77,how:"Left foot",side:"away"} ] },
+
+  // June 17
+  m24: { hs:2, as:1, winner:"home",
+    scorers:[ {name:"Álvaro Morata",min:19,how:"Header",side:"home"},{name:"Achraf Hakimi",min:54,how:"Right foot",side:"away"},{name:"Pedri",min:80,how:"Left foot",side:"home"} ] },
+  m25: { hs:3, as:0, winner:"home",
+    scorers:[ {name:"Harry Kane",min:11,how:"Penalty",side:"home"},{name:"Jude Bellingham",min:42,how:"Right foot",side:"home"},{name:"Harry Kane",min:73,how:"Header",side:"home"} ] },
 };
 
 // ══════════════════════════════════════════════════════════════════
@@ -1117,29 +1144,46 @@ function renderCard(m, isNext) {
       const awayScorers = res.scorers.filter(s => s.side === 'away' && !s.name.includes('(OG)'));
       const ogs = res.scorers.filter(s => s.name.includes('(OG)'));
 
+      // group goals scored by the same player into one row with a goal count
+      const groupByPlayer = (list) => {
+        const order = [];
+        const map = new Map();
+        list.forEach(s => {
+          if (!map.has(s.name)) { map.set(s.name, []); order.push(s.name); }
+          map.get(s.name).push(s);
+        });
+        return order.map(name => map.get(name));
+      };
+
       if (homeScorers.length) {
         scorerRows += `<div class="scorer-team-label">${m.hf} ${m.home}</div>`;
-        homeScorers.forEach(s => {
-          const icon = HOW_ICON[s.how] || '⚽';
-          const howCls = HOW_CLS[s.how] || '';
+        groupByPlayer(homeScorers).forEach(goals => {
+          const icon = HOW_ICON[goals[0].how] || '⚽';
+          const howCls = HOW_CLS[goals[0].how] || '';
+          const howLabel = goals.length > 1 ? goals.map(g => g.how || 'Goal').join(', ') : (goals[0].how || 'Goal');
+          const mins = goals.map(g => `${g.min}'`).join(', ');
+          const countBadge = goals.length > 1 ? `<span class="sd-count">×${goals.length}</span>` : '';
           scorerRows += `<div class="scorer-detail-row">
             <span class="sd-icon">${icon}</span>
-            <span class="sd-name">${s.name}</span>
-            <span class="sd-how ${howCls}">${s.how || 'Goal'}</span>
-            <span class="sd-min">${s.min}'</span>
+            <span class="sd-name">${goals[0].name}${countBadge}</span>
+            <span class="sd-how ${howCls}">${howLabel}</span>
+            <span class="sd-min">${mins}</span>
           </div>`;
         });
       }
       if (awayScorers.length) {
         scorerRows += `<div class="scorer-team-label">${m.af} ${m.away}</div>`;
-        awayScorers.forEach(s => {
-          const icon = HOW_ICON[s.how] || '⚽';
-          const howCls = HOW_CLS[s.how] || '';
+        groupByPlayer(awayScorers).forEach(goals => {
+          const icon = HOW_ICON[goals[0].how] || '⚽';
+          const howCls = HOW_CLS[goals[0].how] || '';
+          const howLabel = goals.length > 1 ? goals.map(g => g.how || 'Goal').join(', ') : (goals[0].how || 'Goal');
+          const mins = goals.map(g => `${g.min}'`).join(', ');
+          const countBadge = goals.length > 1 ? `<span class="sd-count">×${goals.length}</span>` : '';
           scorerRows += `<div class="scorer-detail-row">
             <span class="sd-icon">${icon}</span>
-            <span class="sd-name">${s.name}</span>
-            <span class="sd-how ${howCls}">${s.how || 'Goal'}</span>
-            <span class="sd-min">${s.min}'</span>
+            <span class="sd-name">${goals[0].name}${countBadge}</span>
+            <span class="sd-how ${howCls}">${howLabel}</span>
+            <span class="sd-min">${mins}</span>
           </div>`;
         });
       }
