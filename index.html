@@ -495,159 +495,124 @@
 <main class="main" id="main"></main>
 
 <footer class="footer">
-  ⏰ All kick-off times shown in Eastern Standard Time (EST) &nbsp;·&nbsp; ⚽ Scores &amp; scorers shown for completed matches
+  ⏰ All kick-off times shown in US Eastern Time (ET) &nbsp;·&nbsp; ⚽ Scores &amp; scorers shown for completed matches
 </footer>
 
 <script>
 // ══════════════════════════════════════════════════════════════════
-//  SCHEDULE  (times = EST 24h)
+//  SCHEDULE  (times = US Eastern Time, 24h)
 // ══════════════════════════════════════════════════════════════════
 // Each match: { id, date, time, home, hf(flag), away, af(flag), group, venue, stage }
 // Results (completed): added via RESULTS map keyed by id
 
 const MATCHES = [
-  // ── June 11 ───────────────────────────────────────────────────
-  { id:"m01", date:"2026-06-11", time:"17:00", home:"Mexico",      hf:"🇲🇽", away:"Ecuador",      af:"🇪🇨", group:"Group A", venue:"Estadio Azteca, Mexico City",          stage:"Group Stage" },
-  { id:"m02", date:"2026-06-11", time:"20:00", home:"USA",         hf:"🇺🇸", away:"Bolivia",      af:"🇧🇴", group:"Group B", venue:"AT&T Stadium, Dallas",                 stage:"Group Stage" },
-  { id:"m03", date:"2026-06-11", time:"23:00", home:"Canada",      hf:"🇨🇦", away:"Venezuela",    af:"🇻🇪", group:"Group C", venue:"BC Place, Vancouver",                  stage:"Group Stage" },
+  // ── June 11 ───────────────────────────────────────────────
+  { id:"m01", date:"2026-06-11", time:"12:00", home:"Mexico", hf:"🇲🇽", away:"Ecuador", af:"🇪🇨", group:"Group A", venue:"Estadio Azteca, Mexico City", stage:"Group Stage" },
+  { id:"m02", date:"2026-06-11", time:"15:00", home:"USA", hf:"🇺🇸", away:"Bolivia", af:"🇧🇴", group:"Group B", venue:"AT&T Stadium, Dallas", stage:"Group Stage" },
+  { id:"m03", date:"2026-06-11", time:"18:00", home:"Costa Rica", hf:"🇨🇷", away:"New Zealand", af:"🇳🇿", group:"Group C", venue:"BC Place, Vancouver", stage:"Group Stage" },
+  { id:"m04", date:"2026-06-11", time:"21:00", home:"Argentina", hf:"🇦🇷", away:"Nigeria", af:"🇳🇬", group:"Group D", venue:"MetLife Stadium, New York/NJ", stage:"Group Stage" },
 
-  // ── June 12 ───────────────────────────────────────────────────
-  { id:"m04", date:"2026-06-12", time:"12:00", home:"Argentina",   hf:"🇦🇷", away:"Nigeria",      af:"🇳🇬", group:"Group D", venue:"MetLife Stadium, New York/NJ",         stage:"Group Stage" },
-  { id:"m05", date:"2026-06-12", time:"15:00", home:"France",      hf:"🇫🇷", away:"Morocco",      af:"🇲🇦", group:"Group E", venue:"Hard Rock Stadium, Miami",             stage:"Group Stage" },
-  { id:"m06", date:"2026-06-12", time:"18:00", home:"Brazil",      hf:"🇧🇷", away:"Japan",        af:"🇯🇵", group:"Group F", venue:"SoFi Stadium, Los Angeles",            stage:"Group Stage" },
-  { id:"m07", date:"2026-06-12", time:"21:00", home:"Germany",     hf:"🇩🇪", away:"South Korea",  af:"🇰🇷", group:"Group G", venue:"Gillette Stadium, Boston",             stage:"Group Stage" },
+  // ── June 12 ───────────────────────────────────────────────
+  { id:"m05", date:"2026-06-12", time:"12:00", home:"France", hf:"🇫🇷", away:"Morocco", af:"🇲🇦", group:"Group E", venue:"Hard Rock Stadium, Miami", stage:"Group Stage" },
+  { id:"m06", date:"2026-06-12", time:"15:00", home:"Brazil", hf:"🇧🇷", away:"Japan", af:"🇯🇵", group:"Group F", venue:"SoFi Stadium, Los Angeles", stage:"Group Stage" },
+  { id:"m07", date:"2026-06-12", time:"18:00", home:"England", hf:"🏴󠁧󠁢󠁥󠁮󠁧󠁿", away:"Serbia", af:"🇷🇸", group:"Group G", venue:"Gillette Stadium, Boston", stage:"Group Stage" },
+  { id:"m08", date:"2026-06-12", time:"21:00", home:"Croatia", hf:"🇭🇷", away:"Paraguay", af:"🇵🇾", group:"Group H", venue:"Lincoln Financial, Philadelphia", stage:"Group Stage" },
 
-  // ── June 13 ───────────────────────────────────────────────────
-  { id:"m08", date:"2026-06-13", time:"12:00", home:"Spain",       hf:"🇪🇸", away:"Senegal",      af:"🇸🇳", group:"Group H", venue:"Lincoln Financial, Philadelphia",      stage:"Group Stage" },
-  { id:"m09", date:"2026-06-13", time:"15:00", home:"England",     hf:"🏴󠁧󠁢󠁥󠁮󠁧󠁿", away:"Serbia",      af:"🇷🇸", group:"Group I", venue:"Lumen Field, Seattle",                stage:"Group Stage" },
-  { id:"m10", date:"2026-06-13", time:"18:00", home:"Portugal",    hf:"🇵🇹", away:"Saudi Arabia", af:"🇸🇦", group:"Group J", venue:"Arrowhead Stadium, Kansas City",       stage:"Group Stage" },
-  { id:"m11", date:"2026-06-13", time:"21:00", home:"Netherlands", hf:"🇳🇱", away:"Ivory Coast",  af:"🇨🇮", group:"Group K", venue:"Estadio BBVA, Monterrey",              stage:"Group Stage" },
+  // ── June 13 ───────────────────────────────────────────────
+  { id:"m09", date:"2026-06-13", time:"12:00", home:"Uruguay", hf:"🇺🇾", away:"Iran", af:"🇮🇷", group:"Group I", venue:"Lumen Field, Seattle", stage:"Group Stage" },
+  { id:"m10", date:"2026-06-13", time:"15:00", home:"Colombia", hf:"🇨🇴", away:"Australia", af:"🇦🇺", group:"Group J", venue:"Arrowhead Stadium, Kansas City", stage:"Group Stage" },
+  { id:"m11", date:"2026-06-13", time:"18:00", home:"Belgium", hf:"🇧🇪", away:"Egypt", af:"🇪🇬", group:"Group K", venue:"Estadio BBVA, Monterrey", stage:"Group Stage" },
+  { id:"m12", date:"2026-06-13", time:"21:00", home:"Switzerland", hf:"🇨🇭", away:"Cameroon", af:"🇨🇲", group:"Group L", venue:"Estadio Akron, Guadalajara", stage:"Group Stage" },
 
-  // ── June 14 ───────────────────────────────────────────────────
-  { id:"m12", date:"2026-06-14", time:"12:00", home:"Croatia",     hf:"🇭🇷", away:"Paraguay",     af:"🇵🇾", group:"Group L", venue:"Estadio Akron, Guadalajara",           stage:"Group Stage" },
-  { id:"m13", date:"2026-06-14", time:"15:00", home:"Uruguay",     hf:"🇺🇾", away:"Iran",          af:"🇮🇷", group:"Group M", venue:"Rose Bowl, Pasadena",                  stage:"Group Stage" },
-  { id:"m14", date:"2026-06-14", time:"18:00", home:"Colombia",    hf:"🇨🇴", away:"Australia",    af:"🇦🇺", group:"Group N", venue:"Levi's Stadium, San Francisco",        stage:"Group Stage" },
-  { id:"m15", date:"2026-06-14", time:"21:00", home:"Belgium",     hf:"🇧🇪", away:"Egypt",         af:"🇪🇬", group:"Group O", venue:"BMO Field, Toronto",                   stage:"Group Stage" },
+  // ── June 14 ───────────────────────────────────────────────
+  { id:"m13", date:"2026-06-14", time:"12:00", home:"Mexico", hf:"🇲🇽", away:"Venezuela", af:"🇻🇪", group:"Group A", venue:"Rose Bowl, Pasadena", stage:"Group Stage" },
+  { id:"m14", date:"2026-06-14", time:"15:00", home:"USA", hf:"🇺🇸", away:"Panama", af:"🇵🇦", group:"Group B", venue:"Levi's Stadium, San Francisco", stage:"Group Stage" },
+  { id:"m15", date:"2026-06-14", time:"18:00", home:"Costa Rica", hf:"🇨🇷", away:"Qatar", af:"🇶🇦", group:"Group C", venue:"BMO Field, Toronto", stage:"Group Stage" },
+  { id:"m16", date:"2026-06-14", time:"21:00", home:"Argentina", hf:"🇦🇷", away:"Ivory Coast", af:"🇨🇮", group:"Group D", venue:"Estadio Azteca, Mexico City", stage:"Group Stage" },
 
-  // ── June 15 (TODAY) ───────────────────────────────────────────
-  { id:"m16", date:"2026-06-15", time:"12:00", home:"Switzerland", hf:"🇨🇭", away:"Cameroon",     af:"🇨🇲", group:"Group P", venue:"MetLife Stadium, New York/NJ",         stage:"Group Stage" },
-  { id:"m17", date:"2026-06-15", time:"15:00", home:"Mexico",      hf:"🇲🇽", away:"Venezuela",    af:"🇻🇪", group:"Group A", venue:"Estadio Azteca, Mexico City",          stage:"Group Stage" },
-  { id:"m18", date:"2026-06-15", time:"18:00", home:"Ecuador",     hf:"🇪🇨", away:"Bolivia",      af:"🇧🇴", group:"Group A", venue:"Hard Rock Stadium, Miami",             stage:"Group Stage" },
-  { id:"m19", date:"2026-06-15", time:"21:00", home:"USA",         hf:"🇺🇸", away:"Canada",       af:"🇨🇦", group:"Group B", venue:"AT&T Stadium, Dallas",                 stage:"Group Stage" },
+  // ── June 15 ───────────────────────────────────────────────
+  { id:"m17", date:"2026-06-15", time:"12:00", home:"France", hf:"🇫🇷", away:"Spain", af:"🇪🇸", group:"Group E", venue:"AT&T Stadium, Dallas", stage:"Group Stage" },
+  { id:"m18", date:"2026-06-15", time:"15:00", home:"Brazil", hf:"🇧🇷", away:"Germany", af:"🇩🇪", group:"Group F", venue:"BC Place, Vancouver", stage:"Group Stage" },
+  { id:"m19", date:"2026-06-15", time:"18:00", home:"England", hf:"🏴󠁧󠁢󠁥󠁮󠁧󠁿", away:"Portugal", af:"🇵🇹", group:"Group G", venue:"MetLife Stadium, New York/NJ", stage:"Group Stage" },
+  { id:"m20", date:"2026-06-15", time:"21:00", home:"Croatia", hf:"🇭🇷", away:"Italy", af:"🇮🇹", group:"Group H", venue:"Hard Rock Stadium, Miami", stage:"Group Stage" },
 
-  // ── June 16 ───────────────────────────────────────────────────
-  { id:"m20", date:"2026-06-16", time:"12:00", home:"Argentina",   hf:"🇦🇷", away:"Ivory Coast",  af:"🇨🇮", group:"Group D", venue:"Hard Rock Stadium, Miami",             stage:"Group Stage" },
-  { id:"m21", date:"2026-06-16", time:"15:00", home:"France",      hf:"🇫🇷", away:"Nigeria",      af:"🇳🇬", group:"Group E", venue:"Levi's Stadium, San Francisco",        stage:"Group Stage" },
-  { id:"m22", date:"2026-06-16", time:"18:00", home:"Brazil",      hf:"🇧🇷", away:"South Korea",  af:"🇰🇷", group:"Group F", venue:"Rose Bowl, Pasadena",                  stage:"Group Stage" },
-  { id:"m23", date:"2026-06-16", time:"21:00", home:"Germany",     hf:"🇩🇪", away:"Japan",        af:"🇯🇵", group:"Group G", venue:"MetLife Stadium, New York/NJ",         stage:"Group Stage" },
+  // ── June 16 ───────────────────────────────────────────────
+  { id:"m21", date:"2026-06-16", time:"12:00", home:"Uruguay", hf:"🇺🇾", away:"Ukraine", af:"🇺🇦", group:"Group I", venue:"SoFi Stadium, Los Angeles", stage:"Group Stage" },
+  { id:"m22", date:"2026-06-16", time:"15:00", home:"Colombia", hf:"🇨🇴", away:"Austria", af:"🇦🇹", group:"Group J", venue:"Gillette Stadium, Boston", stage:"Group Stage" },
+  { id:"m23", date:"2026-06-16", time:"18:00", home:"Belgium", hf:"🇧🇪", away:"Algeria", af:"🇩🇿", group:"Group K", venue:"Lincoln Financial, Philadelphia", stage:"Group Stage" },
+  { id:"m24", date:"2026-06-16", time:"21:00", home:"Switzerland", hf:"🇨🇭", away:"Iraq", af:"🇮🇶", group:"Group L", venue:"Lumen Field, Seattle", stage:"Group Stage" },
 
-  // ── June 17 ───────────────────────────────────────────────────
-  { id:"m24", date:"2026-06-17", time:"12:00", home:"Spain",       hf:"🇪🇸", away:"Morocco",      af:"🇲🇦", group:"Group H", venue:"SoFi Stadium, Los Angeles",            stage:"Group Stage" },
-  { id:"m25", date:"2026-06-17", time:"15:00", home:"England",     hf:"🏴󠁧󠁢󠁥󠁮󠁧󠁿", away:"Saudi Arabia", af:"🇸🇦", group:"Group I", venue:"Lumen Field, Seattle",                stage:"Group Stage" },
-  { id:"m26", date:"2026-06-17", time:"18:00", home:"Portugal",    hf:"🇵🇹", away:"Serbia",       af:"🇷🇸", group:"Group J", venue:"Lincoln Financial, Philadelphia",      stage:"Group Stage" },
-  { id:"m27", date:"2026-06-17", time:"21:00", home:"Netherlands", hf:"🇳🇱", away:"Croatia",      af:"🇭🇷", group:"Group K", venue:"Arrowhead Stadium, Kansas City",       stage:"Group Stage" },
+  // ── June 17 ───────────────────────────────────────────────
+  { id:"m25", date:"2026-06-17", time:"12:00", home:"Mexico", hf:"🇲🇽", away:"Canada", af:"🇨🇦", group:"Group A", venue:"Arrowhead Stadium, Kansas City", stage:"Group Stage" },
+  { id:"m26", date:"2026-06-17", time:"15:00", home:"USA", hf:"🇺🇸", away:"Jamaica", af:"🇯🇲", group:"Group B", venue:"Estadio BBVA, Monterrey", stage:"Group Stage" },
+  { id:"m27", date:"2026-06-17", time:"18:00", home:"Costa Rica", hf:"🇨🇷", away:"South Africa", af:"🇿🇦", group:"Group C", venue:"Estadio Akron, Guadalajara", stage:"Group Stage" },
+  { id:"m28", date:"2026-06-17", time:"21:00", home:"Argentina", hf:"🇦🇷", away:"Netherlands", af:"🇳🇱", group:"Group D", venue:"Rose Bowl, Pasadena", stage:"Group Stage" },
 
-  // ── June 18 ───────────────────────────────────────────────────
-  { id:"m28", date:"2026-06-18", time:"12:00", home:"Belgium",     hf:"🇧🇪", away:"Paraguay",     af:"🇵🇾", group:"Group O", venue:"BMO Field, Toronto",                   stage:"Group Stage" },
-  { id:"m29", date:"2026-06-18", time:"15:00", home:"Colombia",    hf:"🇨🇴", away:"Iran",          af:"🇮🇷", group:"Group N", venue:"Gillette Stadium, Boston",             stage:"Group Stage" },
-  { id:"m30", date:"2026-06-18", time:"18:00", home:"Uruguay",     hf:"🇺🇾", away:"Egypt",         af:"🇪🇬", group:"Group M", venue:"Estadio Akron, Guadalajara",           stage:"Group Stage" },
-  { id:"m31", date:"2026-06-18", time:"21:00", home:"Switzerland", hf:"🇨🇭", away:"Australia",    af:"🇦🇺", group:"Group P", venue:"Estadio BBVA, Monterrey",              stage:"Group Stage" },
+  // ── June 18 ───────────────────────────────────────────────
+  { id:"m29", date:"2026-06-18", time:"12:00", home:"France", hf:"🇫🇷", away:"Senegal", af:"🇸🇳", group:"Group E", venue:"Levi's Stadium, San Francisco", stage:"Group Stage" },
+  { id:"m30", date:"2026-06-18", time:"15:00", home:"Brazil", hf:"🇧🇷", away:"South Korea", af:"🇰🇷", group:"Group F", venue:"BMO Field, Toronto", stage:"Group Stage" },
+  { id:"m31", date:"2026-06-18", time:"18:00", home:"England", hf:"🏴󠁧󠁢󠁥󠁮󠁧󠁿", away:"Saudi Arabia", af:"🇸🇦", group:"Group G", venue:"Estadio Azteca, Mexico City", stage:"Group Stage" },
+  { id:"m32", date:"2026-06-18", time:"21:00", home:"Croatia", hf:"🇭🇷", away:"Poland", af:"🇵🇱", group:"Group H", venue:"AT&T Stadium, Dallas", stage:"Group Stage" },
 
-  // ── June 19 ───────────────────────────────────────────────────
-  { id:"m32", date:"2026-06-19", time:"12:00", home:"Mexico",      hf:"🇲🇽", away:"Bolivia",      af:"🇧🇴", group:"Group A", venue:"Estadio Azteca, Mexico City",          stage:"Group Stage" },
-  { id:"m33", date:"2026-06-19", time:"15:00", home:"USA",         hf:"🇺🇸", away:"Ecuador",      af:"🇪🇨", group:"Group B", venue:"AT&T Stadium, Dallas",                 stage:"Group Stage" },
-  { id:"m34", date:"2026-06-19", time:"18:00", home:"Canada",      hf:"🇨🇦", away:"Venezuela",    af:"🇻🇪", group:"Group C", venue:"BC Place, Vancouver",                  stage:"Group Stage" },
-  { id:"m35", date:"2026-06-19", time:"21:00", home:"Argentina",   hf:"🇦🇷", away:"Morocco",      af:"🇲🇦", group:"Group D", venue:"MetLife Stadium, New York/NJ",         stage:"Group Stage" },
+  // ── June 19 ───────────────────────────────────────────────
+  { id:"m33", date:"2026-06-19", time:"12:00", home:"Uruguay", hf:"🇺🇾", away:"Sweden", af:"🇸🇪", group:"Group I", venue:"BC Place, Vancouver", stage:"Group Stage" },
+  { id:"m34", date:"2026-06-19", time:"15:00", home:"Colombia", hf:"🇨🇴", away:"Tunisia", af:"🇹🇳", group:"Group J", venue:"MetLife Stadium, New York/NJ", stage:"Group Stage" },
+  { id:"m35", date:"2026-06-19", time:"18:00", home:"Belgium", hf:"🇧🇪", away:"Ghana", af:"🇬🇭", group:"Group K", venue:"Hard Rock Stadium, Miami", stage:"Group Stage" },
+  { id:"m36", date:"2026-06-19", time:"21:00", home:"Switzerland", hf:"🇨🇭", away:"Jordan", af:"🇯🇴", group:"Group L", venue:"SoFi Stadium, Los Angeles", stage:"Group Stage" },
 
-  // ── June 20 ───────────────────────────────────────────────────
-  { id:"m36", date:"2026-06-20", time:"12:00", home:"Croatia",     hf:"🇭🇷", away:"Australia",    af:"🇦🇺", group:"Group L", venue:"Estadio Akron, Guadalajara",           stage:"Group Stage" },
-  { id:"m37", date:"2026-06-20", time:"15:00", home:"France",      hf:"🇫🇷", away:"Ivory Coast",  af:"🇨🇮", group:"Group E", venue:"SoFi Stadium, Los Angeles",            stage:"Group Stage" },
-  { id:"m38", date:"2026-06-20", time:"18:00", home:"Brazil",      hf:"🇧🇷", away:"Senegal",      af:"🇸🇳", group:"Group F", venue:"Rose Bowl, Pasadena",                  stage:"Group Stage" },
-  { id:"m39", date:"2026-06-20", time:"21:00", home:"Germany",     hf:"🇩🇪", away:"Serbia",       af:"🇷🇸", group:"Group G", venue:"Lumen Field, Seattle",                stage:"Group Stage" },
+  // ── June 20 ───────────────────────────────────────────────
+  { id:"m37", date:"2026-06-20", time:"12:00", home:"Ecuador", hf:"🇪🇨", away:"Venezuela", af:"🇻🇪", group:"Group A", venue:"Gillette Stadium, Boston", stage:"Group Stage" },
+  { id:"m38", date:"2026-06-20", time:"15:00", home:"Bolivia", hf:"🇧🇴", away:"Panama", af:"🇵🇦", group:"Group B", venue:"Lincoln Financial, Philadelphia", stage:"Group Stage" },
+  { id:"m39", date:"2026-06-20", time:"18:00", home:"New Zealand", hf:"🇳🇿", away:"Qatar", af:"🇶🇦", group:"Group C", venue:"Lumen Field, Seattle", stage:"Group Stage" },
+  { id:"m40", date:"2026-06-20", time:"21:00", home:"Nigeria", hf:"🇳🇬", away:"Ivory Coast", af:"🇨🇮", group:"Group D", venue:"Arrowhead Stadium, Kansas City", stage:"Group Stage" },
 
-  // ── June 21 ───────────────────────────────────────────────────
-  { id:"m40", date:"2026-06-21", time:"12:00", home:"Spain",       hf:"🇪🇸", away:"Japan",        af:"🇯🇵", group:"Group H", venue:"Arrowhead Stadium, Kansas City",       stage:"Group Stage" },
-  { id:"m41", date:"2026-06-21", time:"15:00", home:"England",     hf:"🏴󠁧󠁢󠁥󠁮󠁧󠁿", away:"Morocco",      af:"🇲🇦", group:"Group I", venue:"Lincoln Financial, Philadelphia",      stage:"Group Stage" },
-  { id:"m42", date:"2026-06-21", time:"18:00", home:"Portugal",    hf:"🇵🇹", away:"Nigeria",      af:"🇳🇬", group:"Group J", venue:"Hard Rock Stadium, Miami",             stage:"Group Stage" },
-  { id:"m43", date:"2026-06-21", time:"21:00", home:"Netherlands", hf:"🇳🇱", away:"South Korea",  af:"🇰🇷", group:"Group K", venue:"MetLife Stadium, New York/NJ",         stage:"Group Stage" },
+  // ── June 21 ───────────────────────────────────────────────
+  { id:"m41", date:"2026-06-21", time:"12:00", home:"Spain", hf:"🇪🇸", away:"Morocco", af:"🇲🇦", group:"Group E", venue:"Estadio BBVA, Monterrey", stage:"Group Stage" },
+  { id:"m42", date:"2026-06-21", time:"15:00", home:"Germany", hf:"🇩🇪", away:"Japan", af:"🇯🇵", group:"Group F", venue:"Estadio Akron, Guadalajara", stage:"Group Stage" },
+  { id:"m43", date:"2026-06-21", time:"18:00", home:"Serbia", hf:"🇷🇸", away:"Portugal", af:"🇵🇹", group:"Group G", venue:"Rose Bowl, Pasadena", stage:"Group Stage" },
+  { id:"m44", date:"2026-06-21", time:"21:00", home:"Paraguay", hf:"🇵🇾", away:"Italy", af:"🇮🇹", group:"Group H", venue:"Levi's Stadium, San Francisco", stage:"Group Stage" },
 
-  // ── June 22 ───────────────────────────────────────────────────
-  { id:"m44", date:"2026-06-22", time:"12:00", home:"Belgium",     hf:"🇧🇪", away:"Iran",          af:"🇮🇷", group:"Group O", venue:"Levi's Stadium, San Francisco",        stage:"Group Stage" },
-  { id:"m45", date:"2026-06-22", time:"15:00", home:"Colombia",    hf:"🇨🇴", away:"Egypt",         af:"🇪🇬", group:"Group N", venue:"BMO Field, Toronto",                   stage:"Group Stage" },
-  { id:"m46", date:"2026-06-22", time:"18:00", home:"Uruguay",     hf:"🇺🇾", away:"Senegal",      af:"🇸🇳", group:"Group M", venue:"Gillette Stadium, Boston",             stage:"Group Stage" },
-  { id:"m47", date:"2026-06-22", time:"21:00", home:"Switzerland", hf:"🇨🇭", away:"Paraguay",     af:"🇵🇾", group:"Group P", venue:"Estadio Akron, Guadalajara",           stage:"Group Stage" },
+  // ── June 22 ───────────────────────────────────────────────
+  { id:"m45", date:"2026-06-22", time:"12:00", home:"Iran", hf:"🇮🇷", away:"Ukraine", af:"🇺🇦", group:"Group I", venue:"BMO Field, Toronto", stage:"Group Stage" },
+  { id:"m46", date:"2026-06-22", time:"15:00", home:"Australia", hf:"🇦🇺", away:"Austria", af:"🇦🇹", group:"Group J", venue:"Estadio Azteca, Mexico City", stage:"Group Stage" },
+  { id:"m47", date:"2026-06-22", time:"18:00", home:"Egypt", hf:"🇪🇬", away:"Algeria", af:"🇩🇿", group:"Group K", venue:"AT&T Stadium, Dallas", stage:"Group Stage" },
+  { id:"m48", date:"2026-06-22", time:"21:00", home:"Cameroon", hf:"🇨🇲", away:"Iraq", af:"🇮🇶", group:"Group L", venue:"BC Place, Vancouver", stage:"Group Stage" },
 
-  // ── June 23 ───────────────────────────────────────────────────
-  { id:"m48", date:"2026-06-23", time:"12:00", home:"Mexico",      hf:"🇲🇽", away:"Ecuador",      af:"🇪🇨", group:"Group A", venue:"Estadio Azteca, Mexico City",          stage:"Group Stage" },
-  { id:"m49", date:"2026-06-23", time:"15:00", home:"Bolivia",     hf:"🇧🇴", away:"Venezuela",    af:"🇻🇪", group:"Group A", venue:"Hard Rock Stadium, Miami",             stage:"Group Stage" },
-  { id:"m50", date:"2026-06-23", time:"18:00", home:"USA",         hf:"🇺🇸", away:"Bolivia",      af:"🇧🇴", group:"Group B", venue:"AT&T Stadium, Dallas",                 stage:"Group Stage" },
-  { id:"m51", date:"2026-06-23", time:"21:00", home:"Canada",      hf:"🇨🇦", away:"Ecuador",      af:"🇪🇨", group:"Group C", venue:"BC Place, Vancouver",                  stage:"Group Stage" },
+  // ── June 23 ───────────────────────────────────────────────
+  { id:"m49", date:"2026-06-23", time:"12:00", home:"Ecuador", hf:"🇪🇨", away:"Canada", af:"🇨🇦", group:"Group A", venue:"MetLife Stadium, New York/NJ", stage:"Group Stage" },
+  { id:"m50", date:"2026-06-23", time:"15:00", home:"Bolivia", hf:"🇧🇴", away:"Jamaica", af:"🇯🇲", group:"Group B", venue:"Hard Rock Stadium, Miami", stage:"Group Stage" },
+  { id:"m51", date:"2026-06-23", time:"18:00", home:"New Zealand", hf:"🇳🇿", away:"South Africa", af:"🇿🇦", group:"Group C", venue:"SoFi Stadium, Los Angeles", stage:"Group Stage" },
+  { id:"m52", date:"2026-06-23", time:"21:00", home:"Nigeria", hf:"🇳🇬", away:"Netherlands", af:"🇳🇱", group:"Group D", venue:"Gillette Stadium, Boston", stage:"Group Stage" },
 
-  // ── June 24 ───────────────────────────────────────────────────
-  { id:"m52", date:"2026-06-24", time:"12:00", home:"Argentina",   hf:"🇦🇷", away:"Ivory Coast",  af:"🇨🇮", group:"Group D", venue:"Hard Rock Stadium, Miami",             stage:"Group Stage" },
-  { id:"m53", date:"2026-06-24", time:"15:00", home:"France",      hf:"🇫🇷", away:"Morocco",      af:"🇲🇦", group:"Group E", venue:"SoFi Stadium, Los Angeles",            stage:"Group Stage" },
-  { id:"m54", date:"2026-06-24", time:"18:00", home:"Brazil",      hf:"🇧🇷", away:"South Korea",  af:"🇰🇷", group:"Group F", venue:"Rose Bowl, Pasadena",                  stage:"Group Stage" },
-  { id:"m55", date:"2026-06-24", time:"21:00", home:"Germany",     hf:"🇩🇪", away:"Japan",        af:"🇯🇵", group:"Group G", venue:"Lumen Field, Seattle",                stage:"Group Stage" },
+  // ── June 24 ───────────────────────────────────────────────
+  { id:"m53", date:"2026-06-24", time:"12:00", home:"Morocco", hf:"🇲🇦", away:"Senegal", af:"🇸🇳", group:"Group E", venue:"Lincoln Financial, Philadelphia", stage:"Group Stage" },
+  { id:"m54", date:"2026-06-24", time:"15:00", home:"Japan", hf:"🇯🇵", away:"South Korea", af:"🇰🇷", group:"Group F", venue:"Lumen Field, Seattle", stage:"Group Stage" },
+  { id:"m55", date:"2026-06-24", time:"18:00", home:"Serbia", hf:"🇷🇸", away:"Saudi Arabia", af:"🇸🇦", group:"Group G", venue:"Arrowhead Stadium, Kansas City", stage:"Group Stage" },
+  { id:"m56", date:"2026-06-24", time:"21:00", home:"Paraguay", hf:"🇵🇾", away:"Poland", af:"🇵🇱", group:"Group H", venue:"Estadio BBVA, Monterrey", stage:"Group Stage" },
 
-  // ── June 25 ───────────────────────────────────────────────────
-  { id:"m56", date:"2026-06-25", time:"12:00", home:"Spain",       hf:"🇪🇸", away:"Senegal",      af:"🇸🇳", group:"Group H", venue:"Arrowhead Stadium, Kansas City",       stage:"Group Stage" },
-  { id:"m57", date:"2026-06-25", time:"15:00", home:"England",     hf:"🏴󠁧󠁢󠁥󠁮󠁧󠁿", away:"Saudi Arabia", af:"🇸🇦", group:"Group I", venue:"Lumen Field, Seattle",                stage:"Group Stage" },
-  { id:"m58", date:"2026-06-25", time:"18:00", home:"Portugal",    hf:"🇵🇹", away:"Serbia",       af:"🇷🇸", group:"Group J", venue:"Lincoln Financial, Philadelphia",      stage:"Group Stage" },
-  { id:"m59", date:"2026-06-25", time:"21:00", home:"Netherlands", hf:"🇳🇱", away:"Croatia",      af:"🇭🇷", group:"Group K", venue:"MetLife Stadium, New York/NJ",         stage:"Group Stage" },
+  // ── June 25 ───────────────────────────────────────────────
+  { id:"m57", date:"2026-06-25", time:"12:00", home:"Iran", hf:"🇮🇷", away:"Sweden", af:"🇸🇪", group:"Group I", venue:"Estadio Akron, Guadalajara", stage:"Group Stage" },
+  { id:"m58", date:"2026-06-25", time:"15:00", home:"Australia", hf:"🇦🇺", away:"Tunisia", af:"🇹🇳", group:"Group J", venue:"Rose Bowl, Pasadena", stage:"Group Stage" },
+  { id:"m59", date:"2026-06-25", time:"18:00", home:"Egypt", hf:"🇪🇬", away:"Ghana", af:"🇬🇭", group:"Group K", venue:"Levi's Stadium, San Francisco", stage:"Group Stage" },
+  { id:"m60", date:"2026-06-25", time:"21:00", home:"Cameroon", hf:"🇨🇲", away:"Jordan", af:"🇯🇴", group:"Group L", venue:"BMO Field, Toronto", stage:"Group Stage" },
 
-  // ── June 26 ───────────────────────────────────────────────────
-  { id:"m60", date:"2026-06-26", time:"12:00", home:"Belgium",     hf:"🇧🇪", away:"Paraguay",     af:"🇵🇾", group:"Group O", venue:"BMO Field, Toronto",                   stage:"Group Stage" },
-  { id:"m61", date:"2026-06-26", time:"15:00", home:"Colombia",    hf:"🇨🇴", away:"Iran",          af:"🇮🇷", group:"Group N", venue:"Levi's Stadium, San Francisco",        stage:"Group Stage" },
-  { id:"m62", date:"2026-06-26", time:"18:00", home:"Uruguay",     hf:"🇺🇾", away:"Egypt",         af:"🇪🇬", group:"Group M", venue:"Estadio Akron, Guadalajara",           stage:"Group Stage" },
-  { id:"m63", date:"2026-06-26", time:"21:00", home:"Switzerland", hf:"🇨🇭", away:"Cameroon",     af:"🇨🇲", group:"Group P", venue:"Estadio BBVA, Monterrey",              stage:"Group Stage" },
+  // ── June 26 ───────────────────────────────────────────────
+  { id:"m61", date:"2026-06-26", time:"12:00", home:"Canada", hf:"🇨🇦", away:"Venezuela", af:"🇻🇪", group:"Group A", venue:"Estadio Azteca, Mexico City", stage:"Group Stage" },
+  { id:"m62", date:"2026-06-26", time:"15:00", home:"Panama", hf:"🇵🇦", away:"Jamaica", af:"🇯🇲", group:"Group B", venue:"AT&T Stadium, Dallas", stage:"Group Stage" },
+  { id:"m63", date:"2026-06-26", time:"18:00", home:"Qatar", hf:"🇶🇦", away:"South Africa", af:"🇿🇦", group:"Group C", venue:"BC Place, Vancouver", stage:"Group Stage" },
+  { id:"m64", date:"2026-06-26", time:"21:00", home:"Netherlands", hf:"🇳🇱", away:"Ivory Coast", af:"🇨🇮", group:"Group D", venue:"MetLife Stadium, New York/NJ", stage:"Group Stage" },
 
-  // ── June 27 ───────────────────────────────────────────────────
-  { id:"m64", date:"2026-06-27", time:"12:00", home:"Croatia",     hf:"🇭🇷", away:"Australia",    af:"🇦🇺", group:"Group L", venue:"Estadio Akron, Guadalajara",           stage:"Group Stage" },
-  { id:"m65", date:"2026-06-27", time:"15:00", home:"Germany",     hf:"🇩🇪", away:"Serbia",       af:"🇷🇸", group:"Group G", venue:"Gillette Stadium, Boston",             stage:"Group Stage" },
-  { id:"m66", date:"2026-06-27", time:"18:00", home:"Spain",       hf:"🇪🇸", away:"Japan",        af:"🇯🇵", group:"Group H", venue:"SoFi Stadium, Los Angeles",            stage:"Group Stage" },
-  { id:"m67", date:"2026-06-27", time:"21:00", home:"England",     hf:"🏴󠁧󠁢󠁥󠁮󠁧󠁿", away:"Morocco",      af:"🇲🇦", group:"Group I", venue:"MetLife Stadium, New York/NJ",         stage:"Group Stage" },
+  // ── June 27 ───────────────────────────────────────────────
+  { id:"m65", date:"2026-06-27", time:"12:00", home:"Spain", hf:"🇪🇸", away:"Senegal", af:"🇸🇳", group:"Group E", venue:"Hard Rock Stadium, Miami", stage:"Group Stage" },
+  { id:"m66", date:"2026-06-27", time:"15:00", home:"Germany", hf:"🇩🇪", away:"South Korea", af:"🇰🇷", group:"Group F", venue:"SoFi Stadium, Los Angeles", stage:"Group Stage" },
+  { id:"m67", date:"2026-06-27", time:"18:00", home:"Portugal", hf:"🇵🇹", away:"Saudi Arabia", af:"🇸🇦", group:"Group G", venue:"Gillette Stadium, Boston", stage:"Group Stage" },
+  { id:"m68", date:"2026-06-27", time:"21:00", home:"Italy", hf:"🇮🇹", away:"Poland", af:"🇵🇱", group:"Group H", venue:"Lincoln Financial, Philadelphia", stage:"Group Stage" },
 
-  // ── June 28 ───────────────────────────────────────────────────
-  { id:"m68", date:"2026-06-28", time:"12:00", home:"Portugal",    hf:"🇵🇹", away:"Nigeria",      af:"🇳🇬", group:"Group J", venue:"Hard Rock Stadium, Miami",             stage:"Group Stage" },
-  { id:"m69", date:"2026-06-28", time:"15:00", home:"Netherlands", hf:"🇳🇱", away:"South Korea",  af:"🇰🇷", group:"Group K", venue:"Rose Bowl, Pasadena",                  stage:"Group Stage" },
-  { id:"m70", date:"2026-06-28", time:"18:00", home:"Belgium",     hf:"🇧🇪", away:"Iran",          af:"🇮🇷", group:"Group O", venue:"AT&T Stadium, Dallas",                 stage:"Group Stage" },
-  { id:"m71", date:"2026-06-28", time:"21:00", home:"Colombia",    hf:"🇨🇴", away:"Egypt",         af:"🇪🇬", group:"Group N", venue:"Levi's Stadium, San Francisco",        stage:"Group Stage" },
-
-  // ── June 29 ───────────────────────────────────────────────────
-  { id:"m72", date:"2026-06-29", time:"12:00", home:"Uruguay",     hf:"🇺🇾", away:"Senegal",      af:"🇸🇳", group:"Group M", venue:"Gillette Stadium, Boston",             stage:"Group Stage" },
-  { id:"m73", date:"2026-06-29", time:"15:00", home:"Switzerland", hf:"🇨🇭", away:"Paraguay",     af:"🇵🇾", group:"Group P", venue:"Estadio Akron, Guadalajara",           stage:"Group Stage" },
-  { id:"m74", date:"2026-06-29", time:"18:00", home:"Croatia",     hf:"🇭🇷", away:"Australia",    af:"🇦🇺", group:"Group L", venue:"Estadio BBVA, Monterrey",              stage:"Group Stage" },
-  { id:"m75", date:"2026-06-29", time:"21:00", home:"Argentina",   hf:"🇦🇷", away:"Morocco",      af:"🇲🇦", group:"Group D", venue:"MetLife Stadium, New York/NJ",         stage:"Group Stage" },
-
-  // ── June 30 (Matchday 3 simultaneous) ────────────────────────
-  { id:"m76", date:"2026-06-30", time:"12:00", home:"Mexico",      hf:"🇲🇽", away:"Ecuador",      af:"🇪🇨", group:"Group A", venue:"Estadio Azteca, Mexico City",          stage:"Group Stage" },
-  { id:"m77", date:"2026-06-30", time:"12:00", home:"Bolivia",     hf:"🇧🇴", away:"Venezuela",    af:"🇻🇪", group:"Group A", venue:"Hard Rock Stadium, Miami",             stage:"Group Stage" },
-  { id:"m78", date:"2026-06-30", time:"15:00", home:"USA",         hf:"🇺🇸", away:"Canada",       af:"🇨🇦", group:"Group B", venue:"AT&T Stadium, Dallas",                 stage:"Group Stage" },
-  { id:"m79", date:"2026-06-30", time:"15:00", home:"Bolivia",     hf:"🇧🇴", away:"Ecuador",      af:"🇪🇨", group:"Group B", venue:"SoFi Stadium, Los Angeles",            stage:"Group Stage" },
-
-  // ── July 1 ────────────────────────────────────────────────────
-  { id:"m80", date:"2026-07-01", time:"15:00", home:"France",      hf:"🇫🇷", away:"Ivory Coast",  af:"🇨🇮", group:"Group E", venue:"SoFi Stadium, Los Angeles",            stage:"Group Stage" },
-  { id:"m81", date:"2026-07-01", time:"15:00", home:"Morocco",     hf:"🇲🇦", away:"Nigeria",      af:"🇳🇬", group:"Group E", venue:"Hard Rock Stadium, Miami",             stage:"Group Stage" },
-  { id:"m82", date:"2026-07-01", time:"18:00", home:"Brazil",      hf:"🇧🇷", away:"Japan",        af:"🇯🇵", group:"Group F", venue:"Rose Bowl, Pasadena",                  stage:"Group Stage" },
-  { id:"m83", date:"2026-07-01", time:"18:00", home:"South Korea", hf:"🇰🇷", away:"Senegal",      af:"🇸🇳", group:"Group F", venue:"Levi's Stadium, San Francisco",        stage:"Group Stage" },
-
-  // ── July 2 ────────────────────────────────────────────────────
-  { id:"m84", date:"2026-07-02", time:"15:00", home:"Germany",     hf:"🇩🇪", away:"South Korea",  af:"🇰🇷", group:"Group G", venue:"Lumen Field, Seattle",                stage:"Group Stage" },
-  { id:"m85", date:"2026-07-02", time:"15:00", home:"Japan",       hf:"🇯🇵", away:"Serbia",       af:"🇷🇸", group:"Group G", venue:"Gillette Stadium, Boston",             stage:"Group Stage" },
-  { id:"m86", date:"2026-07-02", time:"18:00", home:"Spain",       hf:"🇪🇸", away:"Morocco",      af:"🇲🇦", group:"Group H", venue:"Arrowhead Stadium, Kansas City",       stage:"Group Stage" },
-  { id:"m87", date:"2026-07-02", time:"18:00", home:"Japan",       hf:"🇯🇵", away:"Senegal",      af:"🇸🇳", group:"Group H", venue:"MetLife Stadium, New York/NJ",         stage:"Group Stage" },
-
-  // ── July 3 ────────────────────────────────────────────────────
-  { id:"m88", date:"2026-07-03", time:"15:00", home:"England",     hf:"🏴󠁧󠁢󠁥󠁮󠁧󠁿", away:"Saudi Arabia", af:"🇸🇦", group:"Group I", venue:"Lincoln Financial, Philadelphia",      stage:"Group Stage" },
-  { id:"m89", date:"2026-07-03", time:"15:00", home:"Serbia",      hf:"🇷🇸", away:"Morocco",      af:"🇲🇦", group:"Group I", venue:"AT&T Stadium, Dallas",                 stage:"Group Stage" },
-  { id:"m90", date:"2026-07-03", time:"18:00", home:"Portugal",    hf:"🇵🇹", away:"Saudi Arabia", af:"🇸🇦", group:"Group J", venue:"Levi's Stadium, San Francisco",        stage:"Group Stage" },
-  { id:"m91", date:"2026-07-03", time:"18:00", home:"Nigeria",     hf:"🇳🇬", away:"Serbia",       af:"🇷🇸", group:"Group J", venue:"SoFi Stadium, Los Angeles",            stage:"Group Stage" },
-
-  // ── July 4 ────────────────────────────────────────────────────
-  { id:"m92", date:"2026-07-04", time:"15:00", home:"Netherlands", hf:"🇳🇱", away:"Croatia",      af:"🇭🇷", group:"Group K", venue:"MetLife Stadium, New York/NJ",         stage:"Group Stage" },
-  { id:"m93", date:"2026-07-04", time:"15:00", home:"South Korea", hf:"🇰🇷", away:"Ivory Coast",  af:"🇨🇮", group:"Group K", venue:"Hard Rock Stadium, Miami",             stage:"Group Stage" },
-  { id:"m94", date:"2026-07-04", time:"18:00", home:"Croatia",     hf:"🇭🇷", away:"Paraguay",     af:"🇵🇾", group:"Group L", venue:"Estadio Azteca, Mexico City",          stage:"Group Stage" },
-  { id:"m95", date:"2026-07-04", time:"18:00", home:"Australia",   hf:"🇦🇺", away:"Cameroon",     af:"🇨🇲", group:"Group L", venue:"Estadio BBVA, Monterrey",              stage:"Group Stage" },
+  // ── June 28 ───────────────────────────────────────────────
+  { id:"m69", date:"2026-06-28", time:"12:00", home:"Ukraine", hf:"🇺🇦", away:"Sweden", af:"🇸🇪", group:"Group I", venue:"Lumen Field, Seattle", stage:"Group Stage" },
+  { id:"m70", date:"2026-06-28", time:"15:00", home:"Austria", hf:"🇦🇹", away:"Tunisia", af:"🇹🇳", group:"Group J", venue:"Arrowhead Stadium, Kansas City", stage:"Group Stage" },
+  { id:"m71", date:"2026-06-28", time:"18:00", home:"Algeria", hf:"🇩🇿", away:"Ghana", af:"🇬🇭", group:"Group K", venue:"Estadio BBVA, Monterrey", stage:"Group Stage" },
+  { id:"m72", date:"2026-06-28", time:"21:00", home:"Iraq", hf:"🇮🇶", away:"Jordan", af:"🇯🇴", group:"Group L", venue:"Estadio Akron, Guadalajara", stage:"Group Stage" },
 
   // ── ROUND OF 32 ───────────────────────────────────────────────
   { id:"r01", date:"2026-07-07", time:"14:00", home:"1A",          hf:"🏳️", away:"2B",           af:"🏳️", group:"Match 1", venue:"MetLife Stadium, New York/NJ",         stage:"Round of 32" },
@@ -688,7 +653,7 @@ const MATCHES = [
   { id:"sf2", date:"2026-07-28", time:"20:00", home:"SF3",         hf:"🏳️", away:"SF4",          af:"🏳️", group:"Match 2", venue:"SoFi Stadium, Los Angeles",            stage:"Semi-Final" },
 
   // ── THIRD PLACE ───────────────────────────────────────────────
-  { id:"tp1", date:"2026-07-30", time:"15:00", home:"3rd",         hf:"🏳️", away:"4th",          af:"🏳️", group:"Play-off", venue:"Hard Rock Stadium, Miami",             stage:"Third Place" },
+  { id:"tp1", date:"2026-07-29", time:"15:00", home:"3rd",         hf:"🏳️", away:"4th",          af:"🏳️", group:"Play-off", venue:"Hard Rock Stadium, Miami",             stage:"Third Place" },
 
   // ── FINAL ─────────────────────────────────────────────────────
   { id:"fin", date:"2026-07-30", time:"18:00", home:"Champion",    hf:"🏳️", away:"Runner-up",    af:"🏳️", group:"THE FINAL", venue:"MetLife Stadium, New York/NJ",        stage:"Final" },
@@ -700,69 +665,51 @@ const MATCHES = [
 //  scorer format: { name, min, side: 'home'|'away' }
 // ══════════════════════════════════════════════════════════════════
 const RESULTS = {
-  // June 11
+  // results carried over from original data, remapped to new match ids
   m01: { hs:2, as:1, winner:"home",
     scorers:[ {name:"Raúl Jiménez",min:23,how:"Header",side:"home"},{name:"Hirving Lozano",min:67,how:"Left foot",side:"home"},{name:"Enner Valencia",min:80,how:"Penalty",side:"away"} ] },
   m02: { hs:3, as:0, winner:"home",
     scorers:[ {name:"Christian Pulisic",min:11,how:"Right foot",side:"home"},{name:"Gio Reyna",min:44,how:"Free kick",side:"home"},{name:"Folarin Balogun",min:78,how:"Header",side:"home"} ] },
-  m03: { hs:1, as:1, winner:"draw",
-    scorers:[ {name:"Alphonso Davies",min:36,how:"Left foot",side:"home"},{name:"Josef Martínez",min:62,how:"Header",side:"away"} ] },
-
-  // June 12
   m04: { hs:2, as:0, winner:"home",
     scorers:[ {name:"Lautaro Martínez",min:28,how:"Right foot",side:"home"},{name:"Julián Álvarez",min:55,how:"Left foot",side:"home"} ] },
   m05: { hs:1, as:1, winner:"draw",
     scorers:[ {name:"Kylian Mbappé",min:44,how:"Right foot",side:"home"},{name:"Achraf Hakimi",min:71,how:"Right foot",side:"away"} ] },
   m06: { hs:3, as:1, winner:"home",
     scorers:[ {name:"Vinicius Jr.",min:18,how:"Left foot",side:"home"},{name:"Rodrygo",min:42,how:"Header",side:"home"},{name:"Daichi Kamada",min:64,how:"Right foot",side:"away"},{name:"Raphinha",min:89,how:"Free kick",side:"home"} ] },
-  m07: { hs:2, as:2, winner:"draw",
-    scorers:[ {name:"Kai Havertz",min:21,how:"Header",side:"home"},{name:"Hwang Hee-Chan",min:33,how:"Right foot",side:"away"},{name:"Thomas Müller",min:61,how:"Right foot",side:"home"},{name:"Son Heung-min",min:88,how:"Left foot",side:"away"} ] },
-
-  // June 13
-  m08: { hs:4, as:0, winner:"home",
-    scorers:[ {name:"Pedri",min:14,how:"Right foot",side:"home"},{name:"Álvaro Morata",min:30,how:"Header",side:"home"},{name:"Pedri",min:55,how:"Left foot",side:"home"},{name:"Lamine Yamal",min:82,how:"Right foot",side:"home"} ] },
-  m09: { hs:2, as:0, winner:"home",
+  m07: { hs:2, as:0, winner:"home",
     scorers:[ {name:"Jude Bellingham",min:25,how:"Right foot",side:"home"},{name:"Harry Kane",min:73,how:"Penalty",side:"home"} ] },
-  m10: { hs:3, as:0, winner:"home",
-    scorers:[ {name:"Diogo Jota",min:9,how:"Right foot",side:"home"},{name:"Bruno Fernandes",min:38,how:"Free kick",side:"home"},{name:"Rafael Leão",min:77,how:"Left foot",side:"home"} ] },
-  m11: { hs:2, as:1, winner:"home",
-    scorers:[ {name:"Memphis Depay",min:18,how:"Penalty",side:"home"},{name:"Wilfried Zaha",min:52,how:"Right foot",side:"away"},{name:"Cody Gakpo",min:84,how:"Header",side:"home"} ] },
-
-  // June 14
-  m12: { hs:1, as:0, winner:"home",
+  m08: { hs:1, as:0, winner:"home",
     scorers:[ {name:"Ivan Perišić",min:59,how:"Header",side:"home"} ] },
-  m13: { hs:2, as:1, winner:"home",
+  m09: { hs:2, as:1, winner:"home",
     scorers:[ {name:"Darwin Núñez",min:16,how:"Header",side:"home"},{name:"Sardar Azmoun",min:48,how:"Right foot",side:"away"},{name:"Rodrigo Bentancur",min:85,how:"Right foot",side:"home"} ] },
-  m14: { hs:1, as:2, winner:"away",
+  m10: { hs:1, as:2, winner:"away",
     scorers:[ {name:"Luis Díaz",min:34,how:"Left foot",side:"home"},{name:"Mathew Ryan (OG)",min:41,how:"Own goal",side:"home"},{name:"Martin Boyle",min:67,how:"Right foot",side:"away"},{name:"Mitch Duke",min:90,how:"Header",side:"away"} ] },
-  m15: { hs:3, as:0, winner:"home",
+  m11: { hs:3, as:0, winner:"home",
     scorers:[ {name:"Romelu Lukaku",min:12,how:"Header",side:"home"},{name:"Kevin De Bruyne",min:45,how:"Right foot",side:"home"},{name:"Yannick Carrasco",min:78,how:"Left foot",side:"home"} ] },
-
-  // June 15
-  m16: { hs:2, as:1, winner:"home",
+  m12: { hs:2, as:1, winner:"home",
     scorers:[ {name:"Breel Embolo",min:22,how:"Right foot",side:"home"},{name:"Vincent Aboubakar",min:51,how:"Penalty",side:"away"},{name:"Dan Ndoye",min:73,how:"Left foot",side:"home"} ] },
-  m17: { hs:1, as:1, winner:"draw",
+  m13: { hs:1, as:1, winner:"draw",
     scorers:[ {name:"Santiago Giménez",min:39,how:"Header",side:"home"},{name:"Salomón Rondón",min:64,how:"Right foot",side:"away"} ] },
-  m18: { hs:2, as:0, winner:"home",
-    scorers:[ {name:"Enner Valencia",min:17,how:"Penalty",side:"home"},{name:"Moisés Caicedo",min:70,how:"Right foot",side:"home"} ] },
-  m19: { hs:2, as:2, winner:"draw",
-    scorers:[ {name:"Christian Pulisic",min:8,how:"Left foot",side:"home"},{name:"Jonathan David",min:31,how:"Right foot",side:"away"},{name:"Folarin Balogun",min:58,how:"Header",side:"home"},{name:"Alphonso Davies",min:84,how:"Free kick",side:"away"} ] },
-
-  // June 16
-  m20: { hs:3, as:1, winner:"home",
+  m16: { hs:3, as:1, winner:"home",
     scorers:[ {name:"Lautaro Martínez",min:12,how:"Right foot",side:"home"},{name:"Julián Álvarez",min:29,how:"Left foot",side:"home"},{name:"Nicolas Pépé",min:55,how:"Right foot",side:"away"},{name:"Lautaro Martínez",min:81,how:"Header",side:"home"} ] },
-  m21: { hs:2, as:0, winner:"home",
-    scorers:[ {name:"Kylian Mbappé",min:33,how:"Right foot",side:"home"},{name:"Ousmane Dembélé",min:69,how:"Left foot",side:"home"} ] },
-  m22: { hs:4, as:1, winner:"home",
+  m30: { hs:4, as:1, winner:"home",
     scorers:[ {name:"Vinicius Jr.",min:15,how:"Left foot",side:"home"},{name:"Rodrygo",min:24,how:"Right foot",side:"home"},{name:"Son Heung-min",min:48,how:"Penalty",side:"away"},{name:"Endrick",min:66,how:"Header",side:"home"},{name:"Vinicius Jr.",min:88,how:"Right foot",side:"home"} ] },
-  m23: { hs:1, as:1, winner:"draw",
-    scorers:[ {name:"Jamal Musiala",min:41,how:"Right foot",side:"home"},{name:"Takefusa Kubo",min:77,how:"Left foot",side:"away"} ] },
-
-  // June 17
-  m24: { hs:2, as:1, winner:"home",
-    scorers:[ {name:"Álvaro Morata",min:19,how:"Header",side:"home"},{name:"Achraf Hakimi",min:54,how:"Right foot",side:"away"},{name:"Pedri",min:80,how:"Left foot",side:"home"} ] },
-  m25: { hs:3, as:0, winner:"home",
+  m31: { hs:3, as:0, winner:"home",
     scorers:[ {name:"Harry Kane",min:11,how:"Penalty",side:"home"},{name:"Jude Bellingham",min:42,how:"Right foot",side:"home"},{name:"Harry Kane",min:73,how:"Header",side:"home"} ] },
+  m41: { hs:2, as:1, winner:"home",
+    scorers:[ {name:"Álvaro Morata",min:19,how:"Header",side:"home"},{name:"Achraf Hakimi",min:54,how:"Right foot",side:"away"},{name:"Pedri",min:80,how:"Left foot",side:"home"} ] },
+  m42: { hs:1, as:1, winner:"draw",
+    scorers:[ {name:"Jamal Musiala",min:41,how:"Right foot",side:"home"},{name:"Takefusa Kubo",min:77,how:"Left foot",side:"away"} ] },
+  m61: { hs:1, as:1, winner:"draw",
+    scorers:[ {name:"Alphonso Davies",min:36,how:"Left foot",side:"home"},{name:"Josef Martínez",min:62,how:"Header",side:"away"} ] },
+  m64: { hs:2, as:1, winner:"home",
+    scorers:[ {name:"Memphis Depay",min:18,how:"Penalty",side:"home"},{name:"Wilfried Zaha",min:52,how:"Right foot",side:"away"},{name:"Cody Gakpo",min:84,how:"Header",side:"home"} ] },
+  m65: { hs:4, as:0, winner:"home",
+    scorers:[ {name:"Pedri",min:14,how:"Right foot",side:"home"},{name:"Álvaro Morata",min:30,how:"Header",side:"home"},{name:"Pedri",min:55,how:"Left foot",side:"home"},{name:"Lamine Yamal",min:82,how:"Right foot",side:"home"} ] },
+  m66: { hs:2, as:2, winner:"draw",
+    scorers:[ {name:"Kai Havertz",min:21,how:"Header",side:"home"},{name:"Hwang Hee-Chan",min:33,how:"Right foot",side:"away"},{name:"Thomas Müller",min:61,how:"Right foot",side:"home"},{name:"Son Heung-min",min:88,how:"Left foot",side:"away"} ] },
+  m67: { hs:3, as:0, winner:"home",
+    scorers:[ {name:"Diogo Jota",min:9,how:"Right foot",side:"home"},{name:"Bruno Fernandes",min:38,how:"Free kick",side:"home"},{name:"Rafael Leão",min:77,how:"Left foot",side:"home"} ] },
 };
 
 // ══════════════════════════════════════════════════════════════════
@@ -787,7 +734,7 @@ const TODAY = (() => {
 })();
 
 function matchStart(m) {
-  return new Date(`${m.date}T${m.time}:00-05:00`); // EST = UTC-5
+  return new Date(`${m.date}T${m.time}:00-04:00`); // all match dates fall in US Eastern Daylight Time (EDT, UTC-4)
 }
 
 function status(m) {
@@ -801,7 +748,7 @@ function status(m) {
 
 function fmt12(t) {
   const [h, m] = t.split(':').map(Number);
-  return `${h % 12 || 12}:${String(m).padStart(2,'0')} ${h >= 12 ? 'PM' : 'AM'} EST`;
+  return `${h % 12 || 12}:${String(m).padStart(2,'0')} ${h >= 12 ? 'PM' : 'AM'} ET`;
 }
 
 function friendlyDate(d) {
